@@ -95,13 +95,14 @@ for i in range(ATOMNUM):
         MASTERISOTOPELIST.append(isotopeEntries)
     else:
         MASTERISOTOPELIST.append(None)
-
+nameList = sorted(set(nameList))
 
 class PeriodicTable(QtGui.QWidget):
     
     def __init__(self):
         super(PeriodicTable, self).__init__()
         self.freqConst = 6
+        self.windowList = []
         self.resetIso()
         self.initUI()
         self.upd()
@@ -164,6 +165,7 @@ class PeriodicTable(QtGui.QWidget):
         self.show()
 
     def upd(self):
+        self.updWindows()
         self.b0Entry.setText('%0.2f' %(self.freqConst*GAMMASCALE))
         for i in range(ATOMNUM):
             if MASTERISOTOPELIST[i] is not None:
@@ -174,8 +176,15 @@ class PeriodicTable(QtGui.QWidget):
                 self.labelList[i].setText(str(i+1) + ': ')
                 self.freqEditList[i].setText('')
 
+    def updWindows(self):
+        for win in self.windowList:
+            win.upd()
+                
     def openWindow(self, event, n):
-        self.detailWindow = DetailWindow(self, n)
+        self.windowList.append(DetailWindow(self, n))
+
+    def removeWindow(self, win):
+        self.windowList.remove(win)
 
     def setFreq(self, n):
         if MASTERISOTOPELIST[n] is not None:
@@ -213,7 +222,9 @@ class DetailWindow(QtGui.QWidget):
         self.nSpinBox.valueChanged.connect(self.atomSelect)
         self.grid.addWidget(self.nSpinBox, 0, 1)
         self.grid.addWidget(PtQLabel('Name:'), 0, 2)
-        self.nameLabel = PtQLabel()
+        self.nameLabel = QtGui.QComboBox()
+        self.nameLabel.addItems(list(nameList))
+        self.nameLabel.currentIndexChanged[str].connect(self.atomSelectName)
         self.grid.addWidget(self.nameLabel, 0, 3)
         self.grid.addWidget(PtQLabel('Mass:'), 1, 1)
         self.grid.addWidget(PtQLabel('Spin:'), 1, 2)
@@ -281,15 +292,26 @@ class DetailWindow(QtGui.QWidget):
         self.grid.setRowStretch(LONGEST+2, 1)
         self.grid.setColumnStretch(12, 1)
 
+    def upd(self):
+        self.atomSelect(self.n + 1)
+        
+    def atomSelectName(self, name):
+        for i in range(len(MASTERISOTOPELIST)):
+            var = MASTERISOTOPELIST[i]
+            if var is not None:
+                if name == var['name'][0]:
+                    self.nSpinBox.setValue(i+1)
+                    return
+        
     def atomSelect(self, n):
         self.n = n-1
         atomProp = MASTERISOTOPELIST[self.n]
         if atomProp is None:
-            self.nameLabel.setText('')
             self.display(0)
             return
         num = len(atomProp['mass'])
-        self.nameLabel.setText(atomProp['name'][0])
+        index = self.nameLabel.findText(atomProp['name'][0])
+        self.nameLabel.setCurrentIndex(index)
         self.radiobuttons[int(self.father.isoSelect[self.n])].setChecked(True)
         for i in range(num):
             self.massLabels[i].setText(str(int(atomProp['mass'][i])))
@@ -343,6 +365,10 @@ class DetailWindow(QtGui.QWidget):
             self.linewidthLabels[i].hide()
             self.dpLabels[i].hide()
             self.dcLabels[i].hide()
+
+    def closeEvent(self, event):
+        super(DetailWindow, self).closeEvent(event)
+        self.father.removeWindow(self)
 
 
 class PtQLabel(QtGui.QLabel):
