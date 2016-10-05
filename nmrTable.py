@@ -1,7 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
-from PyQt4 import QtGui, QtCore
+try:
+    from PyQt4 import QtGui, QtCore
+    from PyQt4 import QtGui as QtWidgets
+except ImportError:
+    from PyQt5 import QtGui, QtCore, QtWidgets
 import csv
 from safeEval import safeEval
 
@@ -97,7 +101,7 @@ for i in range(ATOMNUM):
         MASTERISOTOPELIST.append(None)
 nameList = sorted(set(nameList))
 
-class PeriodicTable(QtGui.QWidget):
+class PeriodicTable(QtWidgets.QWidget):
     
     def __init__(self):
         super(PeriodicTable, self).__init__()
@@ -116,7 +120,7 @@ class PeriodicTable(QtGui.QWidget):
                 self.isoSelect[i] = None
         
     def initUI(self):        
-        grid = QtGui.QGridLayout()
+        grid = QtWidgets.QGridLayout()
         self.setLayout(grid)
         count1 = 0
         count2 = 0
@@ -134,8 +138,8 @@ class PeriodicTable(QtGui.QWidget):
             legendEntry.setReadOnly(True)
             grid.addWidget(legendEntry, 0, i+4)
         for i in range(ATOMNUM):
-            # groupList.append(QtGui.QGroupBox(str(i+1)))
-            groupList.append(QtGui.QWidget())
+            # groupList.append(QtWidgets.QGroupBox(str(i+1)))
+            groupList.append(QtWidgets.QWidget())
             groupList[-1].mouseDoubleClickEvent=lambda arg, i=i: self.openWindow(arg, i)
             grid.addWidget(groupList[-1], count1+1, count2)
             count2 += 1
@@ -151,9 +155,9 @@ class PeriodicTable(QtGui.QWidget):
             elif count2 is 18:
                 count2 = 0
                 count1 += 1
-            grid2 = QtGui.QGridLayout()
+            grid2 = QtWidgets.QGridLayout()
             grid2.setSpacing(0)
-            grid2.setMargin(0)
+            grid2.setContentsMargins(0, 0, 0, 0)
             groupList[i].setLayout(grid2)
             groupList[i].setStyleSheet('background-color: white;')
             self.labelList.append(PtQLabel())
@@ -200,7 +204,7 @@ class PeriodicTable(QtGui.QWidget):
             self.upd()
 
 
-class DetailWindow(QtGui.QWidget):
+class DetailWindow(QtWidgets.QWidget):
     
     def __init__(self, parent, n=0):
         super(DetailWindow, self).__init__()
@@ -212,17 +216,17 @@ class DetailWindow(QtGui.QWidget):
 
     def initUI(self):
         self.setWindowTitle('Details')
-        self.grid = QtGui.QGridLayout()
+        self.grid = QtWidgets.QGridLayout()
         self.setLayout(self.grid)
         self.grid.addWidget(PtQLabel('N:'), 0, 0)
-        self.nSpinBox = QtGui.QSpinBox()
+        self.nSpinBox = QtWidgets.QSpinBox()
         self.nSpinBox.setMinimum(1)
         self.nSpinBox.setMaximum(ATOMNUM)
         self.nSpinBox.setValue(self.n)
         self.nSpinBox.valueChanged.connect(self.atomSelect)
         self.grid.addWidget(self.nSpinBox, 0, 1)
         self.grid.addWidget(PtQLabel('Name:'), 0, 2)
-        self.nameLabel = QtGui.QComboBox()
+        self.nameLabel = QtWidgets.QComboBox()
         self.nameLabel.addItems(list(nameList))
         self.nameLabel.currentIndexChanged[str].connect(self.atomSelectName)
         self.grid.addWidget(self.nameLabel, 0, 3)
@@ -237,7 +241,7 @@ class DetailWindow(QtGui.QWidget):
         self.grid.addWidget(PtQLabel('Linewidth:'), 1, 9)
         self.grid.addWidget(PtQLabel('dp:'), 1, 10)
         self.grid.addWidget(PtQLabel('dc:'), 1, 11)
-        self.buttongroup = QtGui.QButtonGroup()
+        self.buttongroup = QtWidgets.QButtonGroup()
         self.buttongroup.buttonClicked.connect(self.changeSelect)
         self.radiobuttons = []
         self.massLabels = []
@@ -252,7 +256,7 @@ class DetailWindow(QtGui.QWidget):
         self.dpLabels = []
         self.dcLabels = []
         for i in range(LONGEST):
-            self.radiobuttons.append(QtGui.QRadioButton())
+            self.radiobuttons.append(QtWidgets.QRadioButton())
             self.buttongroup.addButton(self.radiobuttons[-1], i)
             self.grid.addWidget(self.radiobuttons[-1], i+2, 0)
             self.massLabels.append(PtQLabel())
@@ -371,20 +375,20 @@ class DetailWindow(QtGui.QWidget):
         self.father.removeWindow(self)
 
 
-class PtQLabel(QtGui.QLabel):
+class PtQLabel(QtWidgets.QLabel):
     def __init__(self, parent=None):
-        QtGui.QLabel.__init__(self, parent)
+        QtWidgets.QLabel.__init__(self, parent)
         self.setAlignment(QtCore.Qt.AlignCenter)
 
 
-class PtQLineEdit(QtGui.QLineEdit):
+class PtQLineEdit(QtWidgets.QLineEdit):
     def __init__(self, parent=None):
-        QtGui.QLineEdit.__init__(self, parent)
+        QtWidgets.QLineEdit.__init__(self, parent)
         self.setAlignment(QtCore.Qt.AlignCenter)
 
 
 def main():
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     ex = PeriodicTable()
     sys.exit(app.exec_())
 
