@@ -17,6 +17,7 @@ with open("IsotopeProperties") as isoFile:
 isoList = isoList[1:]
 N = len(isoList)
 nameList = []
+formatNameList = []
 atomNumList = np.zeros(N)
 atomMassList = np.zeros(N)
 spinList = np.zeros(N)
@@ -28,14 +29,13 @@ freqRatioList = np.zeros(N)
 refSampleList = []
 sampleConditionList = []
 linewidthFactorList = np.zeros(N)
-dpList = np.zeros(N)
-dcList = np.zeros(N)
 
 for i in range(N):
     isoN = isoList[i]
     atomNumList[i] = int(isoN[0])
     nameList = np.append(nameList, isoN[1])
     atomMassList[i] = int(isoN[2])
+    formatNameList.append('%d' %(atomMassList[i]) + nameList[-1])
     if isoN[3] == '-':
         spinList[i] = np.nan
     else:
@@ -66,14 +66,6 @@ for i in range(N):
         linewidthFactorList[i] = np.nan
     else:
         linewidthFactorList[i] = isoN[11]
-    if isoN[12] == '-':
-        dpList[i] = np.nan
-    else:
-        dpList[i] = isoN[12]
-    if isoN[13] == '-':
-        dcList[i] = np.nan
-    else:
-        dcList[i] = isoN[13]
 
 # Create a list of structures containing the isotope information
 ATOMNUM = 116
@@ -92,9 +84,7 @@ for i in range(ATOMNUM):
                       'freqRatio': freqRatioList[select],
                       'refSample': refSampleList[select],
                       'sampleCondition': sampleConditionList[select],
-                      'linewidthFactor': linewidthFactorList[select],
-                      'dp': dpList[select],
-                      'dc': dcList[select]}
+                      'linewidthFactor': linewidthFactorList[select]}
     if len(nameList[select]) > 0:
         MASTERISOTOPELIST.append(isotopeEntries)
     else:
@@ -210,6 +200,8 @@ class DetailWindow(QtWidgets.QWidget):
         super(DetailWindow, self).__init__()
         self.father = parent
         self.n = n
+        self.refAtom = 0
+        self.refIso = 0
         self.initUI()
         self.atomSelect(n+1)
         self.show()
@@ -230,17 +222,20 @@ class DetailWindow(QtWidgets.QWidget):
         self.nameLabel.addItems(list(nameList))
         self.nameLabel.currentIndexChanged[str].connect(self.atomSelectName)
         self.grid.addWidget(self.nameLabel, 0, 3)
+        self.refLabel = QtWidgets.QComboBox()
+        self.refLabel.addItems(list(formatNameList))
+        self.refLabel.currentIndexChanged[str].connect(self.refSelect)
+        self.grid.addWidget(self.refLabel, 0, 7)
         self.grid.addWidget(PtQLabel('Mass:'), 1, 1)
         self.grid.addWidget(PtQLabel('Spin:'), 1, 2)
         self.grid.addWidget(PtQLabel('Abundance:'), 1, 3)
         self.grid.addWidget(PtQLabel('Gamma:'), 1, 4)
         self.grid.addWidget(PtQLabel('Q:'), 1, 5)
         self.grid.addWidget(PtQLabel('Freq:'), 1, 6)
-        self.grid.addWidget(PtQLabel('Sample:'), 1, 7)
-        self.grid.addWidget(PtQLabel('Condition:'), 1, 8)
-        self.grid.addWidget(PtQLabel('Linewidth:'), 1, 9)
-        self.grid.addWidget(PtQLabel('dp:'), 1, 10)
-        self.grid.addWidget(PtQLabel('dc:'), 1, 11)
+        self.grid.addWidget(PtQLabel('Sensitivity:'), 1, 7)
+        self.grid.addWidget(PtQLabel('Sample:'), 1, 8)
+        self.grid.addWidget(PtQLabel('Condition:'), 1, 9)
+        self.grid.addWidget(PtQLabel('Linewidth:'), 1, 10)
         self.buttongroup = QtWidgets.QButtonGroup()
         self.buttongroup.buttonClicked.connect(self.changeSelect)
         self.radiobuttons = []
@@ -250,11 +245,10 @@ class DetailWindow(QtWidgets.QWidget):
         self.gammaLabels = []
         self.qLabels = []
         self.freqEntries = []
+        self.sensLabels = []
         self.sampleLabels = []
         self.conditionLabels = []
         self.linewidthLabels = []
-        self.dpLabels = []
-        self.dcLabels = []
         for i in range(LONGEST):
             self.radiobuttons.append(QtWidgets.QRadioButton())
             self.buttongroup.addButton(self.radiobuttons[-1], i)
@@ -278,21 +272,18 @@ class DetailWindow(QtWidgets.QWidget):
             self.freqEntries[-1].setFixedWidth(self.freqEntries[-1].sizeHint().width())
             self.freqEntries[-1].returnPressed.connect(lambda i=i: self.setFreq(i))
             self.grid.addWidget(self.freqEntries[-1], i+2, 6)
+            self.sensLabels.append(PtQLabel())
+            self.sensLabels[-1].setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
+            self.grid.addWidget(self.sensLabels[-1], i+2, 7)
             self.sampleLabels.append(PtQLabel())
             self.sampleLabels[-1].setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-            self.grid.addWidget(self.sampleLabels[-1], i+2, 7)
+            self.grid.addWidget(self.sampleLabels[-1], i+2, 8)
             self.conditionLabels.append(PtQLabel())
             self.conditionLabels[-1].setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-            self.grid.addWidget(self.conditionLabels[-1], i+2, 8)
+            self.grid.addWidget(self.conditionLabels[-1], i+2, 9)
             self.linewidthLabels.append(PtQLabel())
             self.linewidthLabels[-1].setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-            self.grid.addWidget(self.linewidthLabels[-1], i+2, 9)
-            self.dpLabels.append(PtQLabel())
-            self.dpLabels[-1].setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-            self.grid.addWidget(self.dpLabels[-1], i+2, 10)
-            self.dcLabels.append(PtQLabel())
-            self.dcLabels[-1].setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
-            self.grid.addWidget(self.dcLabels[-1], i+2, 11)
+            self.grid.addWidget(self.linewidthLabels[-1], i+2, 10)
         self.grid.setRowStretch(LONGEST+2, 1)
         self.grid.setColumnStretch(12, 1)
 
@@ -327,10 +318,18 @@ class DetailWindow(QtWidgets.QWidget):
             self.sampleLabels[i].setText(str(atomProp['refSample'][i]))
             self.conditionLabels[i].setText(str(atomProp['sampleCondition'][i]))
             self.linewidthLabels[i].setText(str(atomProp['linewidthFactor'][i]))
-            self.dpLabels[i].setText(str(atomProp['dp'][i]))
-            self.dcLabels[i].setText(str(atomProp['dc'][i]))
+            spin1 = atomProp['spin'][i]
+            spin2 = MASTERISOTOPELIST[self.refAtom]['spin'][self.refIso]
+            sens = atomProp['abundance'][i] / MASTERISOTOPELIST[self.refAtom]['abundance'][self.refIso] * np.abs(atomProp['gamma'][i]/MASTERISOTOPELIST[self.refAtom]['gamma'][self.refIso])**3 * spin1 * (spin1 + 1) / (spin2 * (spin2 + 1))
+            self.sensLabels[i].setText('%0.4g' %sens)
         self.display(num)
 
+    def refSelect(self, name):
+        n = formatNameList.index(name)
+        self.refAtom = int(atomNumList[n] - 1)
+        self.refIso = np.where(MASTERISOTOPELIST[self.refAtom]['mass'] == int(atomMassList[n]))[0][0]
+        self.upd()
+        
     def changeSelect(self, n):
         self.father.isoSelect[self.n] = self.buttongroup.checkedId()
         self.father.upd()
@@ -354,8 +353,7 @@ class DetailWindow(QtWidgets.QWidget):
             self.sampleLabels[i].show()
             self.conditionLabels[i].show()
             self.linewidthLabels[i].show()
-            self.dpLabels[i].show()
-            self.dcLabels[i].show()
+            self.sensLabels[i].show()
         for i in range(num, LONGEST):
             self.radiobuttons[i].hide()
             self.massLabels[i].hide()
@@ -367,8 +365,7 @@ class DetailWindow(QtWidgets.QWidget):
             self.sampleLabels[i].hide()
             self.conditionLabels[i].hide()
             self.linewidthLabels[i].hide()
-            self.dpLabels[i].hide()
-            self.dcLabels[i].hide()
+            self.sensLabels[i].hide()
 
     def closeEvent(self, event):
         super(DetailWindow, self).closeEvent(event)
