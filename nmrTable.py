@@ -213,6 +213,11 @@ class PeriodicTable(QtWidgets.QWidget):
             self.freqConst = val / GAMMASCALE
             self.upd()
 
+    def closeEvent(self, event):
+        for win in self.windowList:
+            win.close()
+        super(PeriodicTable, self).closeEvent(event)
+
 
 class DetailWindow(QtWidgets.QWidget):
     
