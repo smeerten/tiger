@@ -11,7 +11,8 @@ from safeEval import safeEval
 
 SPINNAMES = ['0', '1/2', '1', '3/2', '2', '5/2', '3', '7/2', '4', '9/2', '5', '11/2', '6', '13/2', '7', '15/2', '8', '17/2', '9']
 SPINCOLORS = ['white', 'blue', 'orange', 'green', 'yellow', 'red', 'lime', 'olive', 'lightBlue', 'pink', 'gray', 'magenta', 'maroon', 'black']
-GAMMASCALE = 100/42.576
+GAMMASCALE = 100 / 42.576
+ELECTRONSCALE = GAMMASCALE * 28.02495266
 with open("IsotopeProperties") as isoFile:
     isoList = [line.strip().split('\t') for line in isoFile]
 isoList = isoList[1:]
@@ -122,6 +123,10 @@ class PeriodicTable(QtWidgets.QWidget):
         self.b0Entry = PtQLineEdit()
         self.b0Entry.returnPressed.connect(self.setB0)
         grid.addWidget(self.b0Entry, 0, 3)
+        grid.addWidget(PtQLabel('e[GHz]:'), 1, 2)
+        self.electronEntry = PtQLineEdit()
+        self.electronEntry.returnPressed.connect(self.setElectron)
+        grid.addWidget(self.electronEntry, 1, 3)
         grid.addWidget(PtQLabel('Spin:'), 0, 4)
         splitVal = int(np.ceil(len(SPINNAMES)/2.0))
         for i in range(1, splitVal):
@@ -168,6 +173,7 @@ class PeriodicTable(QtWidgets.QWidget):
     def upd(self):
         self.updWindows()
         self.b0Entry.setText('%0.2f' %(self.freqConst*GAMMASCALE))
+        self.electronEntry.setText('%0.2f' %(self.freqConst*ELECTRONSCALE))
         self.spinSet = set([])
         for i in range(ATOMNUM):
             if MASTERISOTOPELIST[i] is not None:
@@ -209,6 +215,12 @@ class PeriodicTable(QtWidgets.QWidget):
 
     def setB0(self):
         val = safeEval(self.b0Entry.text())
+        if val is not None:
+            self.freqConst = val / GAMMASCALE
+            self.upd()
+
+    def setElectron(self):
+        val = safeEval(self.electronEntry.text())
         if val is not None:
             self.freqConst = val / GAMMASCALE
             self.upd()
