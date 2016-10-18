@@ -10,7 +10,7 @@ import csv
 from safeEval import safeEval
 
 SPINNAMES = ['0', '1/2', '1', '3/2', '2', '5/2', '3', '7/2', '4', '9/2', '5', '11/2', '6', '13/2', '7', '15/2', '8', '17/2', '9']
-SPINCOLORS = ['white', 'blue', 'orange', 'green', 'yellow', 'red', 'lime', 'olive', 'lightBlue', 'pink', 'gray', 'magenta', 'maroon', 'black']
+SPINCOLORS = ['white', 'blue', 'orange', 'green', 'yellow', 'red', 'lime', 'olive', 'lightBlue', 'maroon', 'gray', 'pink', 'magenta', 'black']
 GAMMASCALE = 100 / 42.576
 ELECTRONSCALE = GAMMASCALE * 28.02495266
 with open("IsotopeProperties") as isoFile:
@@ -130,6 +130,7 @@ class PeriodicTable(QtWidgets.QWidget):
         grid.addWidget(PtQLabel('Spin:'), 0, 4)
         splitVal = int(np.ceil(len(SPINNAMES)/2.0))
         for i in range(1, splitVal):
+            tmpWidget = QtGui.QWidget()
             self.legendEntries.append(PtQLineEdit(SPINNAMES[i]))
             self.legendEntries[-1].setReadOnly(True)
             grid.addWidget(self.legendEntries[-1], 0, i+4)
@@ -140,10 +141,9 @@ class PeriodicTable(QtWidgets.QWidget):
             grid.addWidget(self.legendEntries[-1], 1, i-splitVal+5)
             self.legendEntries[-1].hide()
         for i in range(ATOMNUM):
-            # groupList.append(QtWidgets.QGroupBox(str(i+1)))
             groupList.append(QtWidgets.QWidget())
             groupList[-1].mouseDoubleClickEvent=lambda arg, i=i: self.openWindow(arg, i)
-            grid.addWidget(groupList[-1], count1+1, count2)
+            grid.addWidget(groupList[-1], count1+2, count2)
             count2 += 1
             if count1 is 0 and count2 is 1:
                 count2 = 17
@@ -179,7 +179,10 @@ class PeriodicTable(QtWidgets.QWidget):
             if MASTERISOTOPELIST[i] is not None:
                 self.labelList[i].setText(str(i+1) + ': <sup>' + str(int(MASTERISOTOPELIST[i]['mass'][int(self.isoSelect[i])])) + '</sup>' + MASTERISOTOPELIST[i]['name'][int(self.isoSelect[i])])
                 self.freqEditList[i].setText('%0.2f' %(self.freqConst*MASTERISOTOPELIST[i]['freqRatio'][int(self.isoSelect[i])]))
-                self.freqEditList[i].setStyleSheet('border-style: outset; border-width: 2px; border-color: ' + SPINCOLORS[int(2*MASTERISOTOPELIST[i]['spin'][int(self.isoSelect[i])])] + ';')
+                color = QtGui.QColor(SPINCOLORS[int(2*MASTERISOTOPELIST[i]['spin'][int(self.isoSelect[i])])])
+                colorA = QtGui.QColor()
+                colorA.setHsl(color.hslHue(), color.hslSaturation(), 245)
+                self.freqEditList[i].setStyleSheet('border-style: solid; border-width: 2px; border-color: rgb'+repr(color.getRgb())+'; background-color: rgb' + repr(colorA.getRgb()) + ';')
                 self.spinSet.add(MASTERISOTOPELIST[i]['spin'][int(self.isoSelect[i])])
             else:
                 self.labelList[i].setText(str(i+1) + ': ')
@@ -192,7 +195,10 @@ class PeriodicTable(QtWidgets.QWidget):
             legendEntry.hide()
         for i in range(len(sortSpinList)):
             index = int(sortSpinList[i])
-            self.legendEntries[i].setStyleSheet('border-style: outset; border-width: 2px; border-color: ' + SPINCOLORS[index] + ';')
+            color = QtGui.QColor(SPINCOLORS[index])
+            colorA = QtGui.QColor()
+            colorA.setHsl(color.hslHue(), color.hslSaturation(), 245)
+            self.legendEntries[i].setStyleSheet('border-style: solid; border-width: 2px; border-color: rgb'+repr(color.getRgb())+'; background-color: rgb' + repr(colorA.getRgb()) + ';')
             self.legendEntries[i].setText(SPINNAMES[index])
             self.legendEntries[i].show()
 
@@ -222,7 +228,7 @@ class PeriodicTable(QtWidgets.QWidget):
     def setElectron(self):
         val = safeEval(self.electronEntry.text())
         if val is not None:
-            self.freqConst = val / GAMMASCALE
+            self.freqConst = val / ELECTRONSCALE
             self.upd()
 
     def closeEvent(self, event):
@@ -322,7 +328,7 @@ class DetailWindow(QtWidgets.QWidget):
             self.linewidthLabels[-1].setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
             self.grid.addWidget(self.linewidthLabels[-1], i+2, 10)
         self.grid.setRowStretch(LONGEST+2, 1)
-        self.grid.setColumnStretch(12, 1)
+        #self.grid.setColumnStretch(12, 1)
 
     def upd(self):
         self.atomSelect(self.n + 1)
