@@ -18,6 +18,7 @@ with open("IsotopeProperties") as isoFile:
 isoList = isoList[1:]
 N = len(isoList)
 nameList = []
+fullNameList = []
 formatNameList = []
 atomNumList = np.zeros(N)
 atomMassList = np.zeros(N)
@@ -35,39 +36,40 @@ for i in range(N):
     isoN = isoList[i]
     atomNumList[i] = int(isoN[0])
     nameList = np.append(nameList, isoN[1])
-    if isoN[2] == '-':
+    fullNameList = np.append(fullNameList, isoN[2])
+    if isoN[3] == '-':
         atomMassList[i] = np.nan
         formatNameList.append(nameList[-1])
     else:
-        atomMassList[i] = int(isoN[2])
+        atomMassList[i] = int(isoN[3])
         formatNameList.append('%d' %(atomMassList[i]) + nameList[-1])
-    if isoN[3] == '-':
+    if isoN[4] == '-':
         spinList[i] = np.nan
     else:
-        spinList[i] = isoN[3]
-    if isoN[4] == '-':
+        spinList[i] = isoN[4]
+    if isoN[5] == '-':
         abundanceList[i] = np.nan
     else:
-        abundanceList[i] = isoN[4]
-    if isoN[5] == '-':
+        abundanceList[i] = isoN[5]
+    if isoN[6] == '-':
         magMomentList[i] = np.nan
     else:
-        magMomentList[i] = isoN[5]
-    if isoN[6] == '-':
+        magMomentList[i] = isoN[6]
+    if isoN[7] == '-':
         gammaList[i] = np.nan
     else:
-        gammaList[i] = isoN[6]
-    if isoN[7] == '-':
+        gammaList[i] = isoN[7]
+    if isoN[8] == '-':
         qList[i] = np.nan
     else:
-        qList[i] = isoN[7]
-    if isoN[8] == '-':
+        qList[i] = isoN[8]
+    if isoN[9] == '-':
         freqRatioList[i] = np.nan
     else:
-        freqRatioList[i] = isoN[8]
-    refSampleList = np.append(refSampleList, isoN[9])
-    sampleConditionList = np.append(sampleConditionList, isoN[10])
-    if isoN[3] == '0.5':
+        freqRatioList[i] = isoN[9]
+    refSampleList = np.append(refSampleList, isoN[10])
+    sampleConditionList = np.append(sampleConditionList, isoN[11])
+    if isoN[4] == '0.5':
         linewidthFactorList[i] = np.nan
     else:
         linewidthFactorList[i] = (2*spinList[i]+3)*qList[i]**2/(spinList[i]**2*(2*spinList[i]-1))
@@ -80,6 +82,7 @@ for i in range(ATOMNUM):
     select = atomNumList == (i+1)
     LONGEST = np.max((LONGEST, np.sum(select)))
     isotopeEntries = {'name': nameList[select],
+                      'fullName': fullNameList[select],
                       'mass': atomMassList[select],
                       'spin': spinList[select],
                       'abundance': abundanceList[select],
@@ -265,18 +268,24 @@ class DetailWindow(QtWidgets.QWidget):
         self.setWindowTitle('Details')
         self.grid = QtWidgets.QGridLayout()
         self.setLayout(self.grid)
-        self.grid.addWidget(PtQLabel('N:'), 0, 0)
+        grid2 = QtWidgets.QGridLayout()
+        self.grid.addLayout(grid2, 0, 0, 1, 6)
+        grid2.addWidget(PtQLabel('N:'), 0, 0)
         self.nSpinBox = QtWidgets.QSpinBox()
         self.nSpinBox.setMinimum(1)
         self.nSpinBox.setMaximum(ATOMNUM)
         self.nSpinBox.setValue(self.n)
         self.nSpinBox.valueChanged.connect(self.atomSelect)
-        self.grid.addWidget(self.nSpinBox, 0, 1)
-        self.grid.addWidget(PtQLabel('Name:'), 0, 2)
+        grid2.addWidget(self.nSpinBox, 0, 1)
+        grid2.addWidget(PtQLabel('Element:'), 0, 2)
         self.nameLabel = QtWidgets.QComboBox()
         self.nameLabel.addItems(list(nameList))
         self.nameLabel.currentIndexChanged[str].connect(self.atomSelectName)
-        self.grid.addWidget(self.nameLabel, 0, 3)
+        grid2.addWidget(self.nameLabel, 0, 3)
+        grid2.addWidget(PtQLabel('Name:'), 0, 4)
+        self.fullNameLabel = PtQLabel()
+        grid2.addWidget(self.fullNameLabel, 0, 5)
+        grid2.setColumnStretch(6, 1)
         self.refLabel = QtWidgets.QComboBox()
         self.refLabel.addItems(list(formatNameList))
         self.refLabel.currentIndexChanged[str].connect(self.refSelect)
@@ -361,6 +370,7 @@ class DetailWindow(QtWidgets.QWidget):
             return
         index = self.nameLabel.findText(atomProp['name'][0])
         self.nameLabel.setCurrentIndex(index)
+        self.fullNameLabel.setText('<b>' + atomProp['fullName'][0] + '</b>')
         if atomProp['mass'] is None:
             self.display(0)
             return
