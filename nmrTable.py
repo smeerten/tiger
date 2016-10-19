@@ -63,10 +63,10 @@ for i in range(N):
         freqRatioList[i] = isoN[8]
     refSampleList = np.append(refSampleList, isoN[9])
     sampleConditionList = np.append(sampleConditionList, isoN[10])
-    if isoN[11] == '-':
+    if isoN[3] == '0.5':
         linewidthFactorList[i] = np.nan
     else:
-        linewidthFactorList[i] = isoN[11]
+        linewidthFactorList[i] = (2*spinList[i]+3)*qList[i]**2/(spinList[i]**2*(2*spinList[i]-1))
 
 # Create a list of structures containing the isotope information
 ATOMNUM = 116
@@ -360,7 +360,7 @@ class DetailWindow(QtWidgets.QWidget):
             self.freqEntries[i].setText(str(self.father.freqConst*atomProp['freqRatio'][i]))
             self.sampleLabels[i].setText(str(atomProp['refSample'][i]))
             self.conditionLabels[i].setText(str(atomProp['sampleCondition'][i]))
-            self.linewidthLabels[i].setText(str(atomProp['linewidthFactor'][i]))
+            self.linewidthLabels[i].setText('%#2.2f' % atomProp['linewidthFactor'][i])
             spin1 = atomProp['spin'][i]
             spin2 = MASTERISOTOPELIST[self.refAtom]['spin'][self.refIso]
             sens = atomProp['abundance'][i] / MASTERISOTOPELIST[self.refAtom]['abundance'][self.refIso] * np.abs(atomProp['gamma'][i]/MASTERISOTOPELIST[self.refAtom]['gamma'][self.refIso])**3 * spin1 * (spin1 + 1) / (spin2 * (spin2 + 1))
