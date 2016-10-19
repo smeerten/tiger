@@ -35,8 +35,12 @@ for i in range(N):
     isoN = isoList[i]
     atomNumList[i] = int(isoN[0])
     nameList = np.append(nameList, isoN[1])
-    atomMassList[i] = int(isoN[2])
-    formatNameList.append('%d' %(atomMassList[i]) + nameList[-1])
+    if isoN[2] == '-':
+        atomMassList[i] = np.nan
+        formatNameList.append(nameList[-1])
+    else:
+        atomMassList[i] = int(isoN[2])
+        formatNameList.append('%d' %(atomMassList[i]) + nameList[-1])
     if isoN[3] == '-':
         spinList[i] = np.nan
     else:
@@ -69,7 +73,7 @@ for i in range(N):
         linewidthFactorList[i] = (2*spinList[i]+3)*qList[i]**2/(spinList[i]**2*(2*spinList[i]-1))
 
 # Create a list of structures containing the isotope information
-ATOMNUM = 116
+ATOMNUM = int(np.amax(atomNumList))
 MASTERISOTOPELIST = []
 LONGEST = 0
 for i in range(ATOMNUM):
@@ -87,6 +91,8 @@ for i in range(ATOMNUM):
                       'sampleCondition': sampleConditionList[select],
                       'linewidthFactor': linewidthFactorList[select]}
     if len(nameList[select]) > 0:
+        if np.all(np.isnan(atomMassList[select])):
+            isotopeEntries['mass'] = None
         MASTERISOTOPELIST.append(isotopeEntries)
     else:
         MASTERISOTOPELIST.append(None)
@@ -180,13 +186,16 @@ class PeriodicTable(QtWidgets.QWidget):
         self.spinSet = set([])
         for i in range(ATOMNUM):
             if MASTERISOTOPELIST[i] is not None:
-                self.labelList[i].setText(str(i+1) + ': <sup>' + str(int(MASTERISOTOPELIST[i]['mass'][int(self.isoSelect[i])])) + '</sup>' + MASTERISOTOPELIST[i]['name'][int(self.isoSelect[i])])
-                self.freqEditList[i].setText('%0.2f' %(self.freqConst*MASTERISOTOPELIST[i]['freqRatio'][int(self.isoSelect[i])]))
-                color = QtGui.QColor(SPINCOLORS[int(2*MASTERISOTOPELIST[i]['spin'][int(self.isoSelect[i])])])
-                colorA = QtGui.QColor()
-                colorA.setHsl(color.hslHue(), color.hslSaturation(), 245)
-                self.freqEditList[i].setStyleSheet('border-style: solid; border-width: 2px; border-color: rgb'+repr(color.getRgb())+'; background-color: rgb' + repr(colorA.getRgb()) + ';')
-                self.spinSet.add(MASTERISOTOPELIST[i]['spin'][int(self.isoSelect[i])])
+                if MASTERISOTOPELIST[i]['mass'] is not None:
+                    self.labelList[i].setText(str(i+1) + ': <sup>' + str(int(MASTERISOTOPELIST[i]['mass'][int(self.isoSelect[i])])) + '</sup>' + MASTERISOTOPELIST[i]['name'][int(self.isoSelect[i])])
+                    self.freqEditList[i].setText('%0.2f' %(self.freqConst*MASTERISOTOPELIST[i]['freqRatio'][int(self.isoSelect[i])]))
+                    color = QtGui.QColor(SPINCOLORS[int(2*MASTERISOTOPELIST[i]['spin'][int(self.isoSelect[i])])])
+                    colorA = QtGui.QColor()
+                    colorA.setHsl(color.hslHue(), color.hslSaturation(), 245)
+                    self.freqEditList[i].setStyleSheet('border-style: solid; border-width: 2px; border-color: rgb'+repr(color.getRgb())+'; background-color: rgb' + repr(colorA.getRgb()) + ';')
+                    self.spinSet.add(MASTERISOTOPELIST[i]['spin'][int(self.isoSelect[i])])
+                else:
+                    self.labelList[i].setText(str(i+1) + ': ' + MASTERISOTOPELIST[i]['name'][int(self.isoSelect[i])])
             else:
                 self.labelList[i].setText(str(i+1) + ': ')
                 self.freqEditList[i].setText('')
@@ -216,7 +225,7 @@ class PeriodicTable(QtWidgets.QWidget):
         self.windowList.remove(win)
 
     def setFreq(self, n):
-        if MASTERISOTOPELIST[n] is not None:
+        if MASTERISOTOPELIST[n] is not None and MASTERISOTOPELIST[n]['mass'] is not None:
             val = safeEval(self.freqEditList[n].text())
             if val is not None:
                 self.freqConst = val / MASTERISOTOPELIST[n]['freqRatio'][int(self.isoSelect[n])] 
@@ -350,10 +359,13 @@ class DetailWindow(QtWidgets.QWidget):
         if atomProp is None:
             self.display(0)
             return
-        num = len(atomProp['mass'])
         index = self.nameLabel.findText(atomProp['name'][0])
         self.nameLabel.setCurrentIndex(index)
+        if atomProp['mass'] is None:
+            self.display(0)
+            return
         self.radiobuttons[int(self.father.isoSelect[self.n])].setChecked(True)
+        num = len(atomProp['mass'])
         for i in range(num):
             self.massLabels[i].setText(str(int(atomProp['mass'][i])))
             self.spinLabels[i].setText(SPINNAMES[int(2*atomProp['spin'][i])])
