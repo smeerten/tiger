@@ -106,7 +106,10 @@ class PeriodicTable(QtWidgets.QWidget):
         self.isoSelect = np.zeros(ATOMNUM)
         for i in range(ATOMNUM):
             if MASTERISOTOPELIST[i] is not None:
-                self.isoSelect[i] = np.nanargmax(MASTERISOTOPELIST[i]['abundance'])
+                if np.all(np.isnan(MASTERISOTOPELIST[i]['abundance'])):
+                    self.isoSelect[i] = 0
+                else:
+                    self.isoSelect[i] = np.nanargmax(MASTERISOTOPELIST[i]['abundance'])
             else:
                 self.isoSelect[i] = None
         
