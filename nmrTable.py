@@ -274,10 +274,10 @@ class DetailWindow(QtWidgets.QWidget):
         self.grid.addWidget(self.refLabel, 0, 7)
         self.grid.addWidget(PtQLabel('Mass:'), 1, 1)
         self.grid.addWidget(PtQLabel('Spin:'), 1, 2)
-        self.grid.addWidget(PtQLabel('Abundance:'), 1, 3)
-        self.grid.addWidget(PtQLabel('Gamma:'), 1, 4)
-        self.grid.addWidget(PtQLabel('Q:'), 1, 5)
-        self.grid.addWidget(PtQLabel('Freq:'), 1, 6)
+        self.grid.addWidget(PtQLabel('Abundance [%]:'), 1, 3)
+        self.grid.addWidget(PtQLabel('Gamma [10<sup>7</sup> rad s<sup>-1</sup> T<sup>-1</sup>]:'), 1, 4)
+        self.grid.addWidget(PtQLabel('Q [fm<sup>2</sup>]:'), 1, 5)
+        self.grid.addWidget(PtQLabel('Frequency [MHz]:'), 1, 6)
         self.grid.addWidget(PtQLabel('Sensitivity:'), 1, 7)
         self.grid.addWidget(PtQLabel('Sample:'), 1, 8)
         self.grid.addWidget(PtQLabel('Condition:'), 1, 9)
@@ -331,7 +331,7 @@ class DetailWindow(QtWidgets.QWidget):
             self.linewidthLabels[-1].setTextInteractionFlags(QtCore.Qt.TextSelectableByMouse)
             self.grid.addWidget(self.linewidthLabels[-1], i+2, 10)
         self.grid.setRowStretch(LONGEST+2, 1)
-        #self.grid.setColumnStretch(12, 1)
+        self.grid.setColumnStretch(12, 1)
 
     def upd(self):
         self.atomSelect(self.n + 1)
