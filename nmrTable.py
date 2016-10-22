@@ -24,7 +24,6 @@ atomNumList = np.zeros(N)
 atomMassList = np.zeros(N)
 spinList = np.zeros(N)
 abundanceList = np.zeros(N)
-magMomentList = np.zeros(N)
 gammaList = np.zeros(N)
 qList = np.zeros(N)
 freqRatioList = np.zeros(N)
@@ -52,23 +51,19 @@ for i in range(N):
     else:
         abundanceList[i] = isoN[5]
     if isoN[6] == '-':
-        magMomentList[i] = np.nan
-    else:
-        magMomentList[i] = isoN[6]
-    if isoN[7] == '-':
         gammaList[i] = np.nan
     else:
-        gammaList[i] = isoN[7]
-    if isoN[8] == '-':
+        gammaList[i] = isoN[6]
+    if isoN[7] == '-':
         qList[i] = np.nan
     else:
-        qList[i] = isoN[8]
-    if isoN[9] == '-':
+        qList[i] = isoN[7]
+    if isoN[8] == '-':
         freqRatioList[i] = np.nan
     else:
-        freqRatioList[i] = isoN[9]
-    refSampleList = np.append(refSampleList, isoN[10])
-    sampleConditionList = np.append(sampleConditionList, isoN[11])
+        freqRatioList[i] = isoN[8]
+    refSampleList = np.append(refSampleList, isoN[9])
+    sampleConditionList = np.append(sampleConditionList, isoN[10])
     if isoN[4] == '0.5':
         linewidthFactorList[i] = np.nan
     else:
@@ -86,7 +81,6 @@ for i in range(ATOMNUM):
                       'mass': atomMassList[select],
                       'spin': spinList[select],
                       'abundance': abundanceList[select],
-                      'magMoment': magMomentList[select],
                       'gamma': gammaList[select],
                       'q': qList[select],
                       'freqRatio': freqRatioList[select],
