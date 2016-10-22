@@ -30,6 +30,7 @@ freqRatioList = np.zeros(N)
 refSampleList = []
 sampleConditionList = []
 linewidthFactorList = np.zeros(N)
+lifetimeList = []
 
 for i in range(N):
     isoN = isoList[i]
@@ -68,6 +69,10 @@ for i in range(N):
         linewidthFactorList[i] = np.nan
     else:
         linewidthFactorList[i] = (2*spinList[i]+3)*qList[i]**2/(spinList[i]**2*(2*spinList[i]-1))
+    if isoN[11] == '-':
+        lifetimeList = np.append(lifetimeList, '-')
+    else:
+        lifetimeList = np.append(lifetimeList, isoN[11])
 
 # Create a list of structures containing the isotope information
 ATOMNUM = int(np.amax(atomNumList))
@@ -86,7 +91,8 @@ for i in range(ATOMNUM):
                       'freqRatio': freqRatioList[select],
                       'refSample': refSampleList[select],
                       'sampleCondition': sampleConditionList[select],
-                      'linewidthFactor': linewidthFactorList[select]}
+                      'linewidthFactor': linewidthFactorList[select],
+                      'lifetime': lifetimeList[select],}
     if len(nameList[select]) > 0:
         if np.all(np.isnan(atomMassList[select])):
             isotopeEntries['mass'] = None
@@ -374,9 +380,15 @@ class DetailWindow(QtWidgets.QWidget):
             self.massLabels[i].setText(str(int(atomProp['mass'][i])))
             self.spinLabels[i].setText(SPINNAMES[int(2*atomProp['spin'][i])])
             if np.isnan(atomProp['abundance'][i]):
-                self.abundanceLabels[i].setText('-')
+                if atomProp['lifetime'][i] == '-':
+                    self.abundanceLabels[i].setText('-')
+                else:
+                    self.abundanceLabels[i].setText('- [' + atomProp['lifetime'][i] +']')
             else:
-                self.abundanceLabels[i].setText(str(atomProp['abundance'][i]))
+                 if atomProp['lifetime'][i] == '-':
+                     self.abundanceLabels[i].setText(str(atomProp['abundance'][i]))
+                 else:
+                     self.abundanceLabels[i].setText(str(atomProp['abundance'][i]) + ' [' + atomProp['lifetime'][i] +']')
             self.gammaLabels[i].setText(str(atomProp['gamma'][i]))
             if np.isnan(atomProp['q'][i]):
                 self.qLabels[i].setText('-')
