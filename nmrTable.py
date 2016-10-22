@@ -379,17 +379,29 @@ class DetailWindow(QtWidgets.QWidget):
         for i in range(num):
             self.massLabels[i].setText(str(int(atomProp['mass'][i])))
             self.spinLabels[i].setText(SPINNAMES[int(2*atomProp['spin'][i])])
-            self.abundanceLabels[i].setText(str(atomProp['abundance'][i]))
+            if np.isnan(atomProp['abundance'][i]):
+                self.abundanceLabels[i].setText('-')
+            else:
+                self.abundanceLabels[i].setText(str(atomProp['abundance'][i]))
             self.gammaLabels[i].setText(str(atomProp['gamma'][i]))
-            self.qLabels[i].setText(str(atomProp['q'][i]))
+            if np.isnan(atomProp['q'][i]):
+                self.qLabels[i].setText('-')
+            else:
+                self.qLabels[i].setText(str(atomProp['q'][i]))
             self.freqEntries[i].setText(str(self.father.freqConst*atomProp['freqRatio'][i]))
             self.sampleLabels[i].setText(str(atomProp['refSample'][i]))
             self.conditionLabels[i].setText(str(atomProp['sampleCondition'][i]))
-            self.linewidthLabels[i].setText('%#2.2f' % atomProp['linewidthFactor'][i])
+            if np.isnan(atomProp['linewidthFactor'][i]):
+                self.linewidthLabels[i].setText('-')
+            else:
+                self.linewidthLabels[i].setText('%#2.2f' % atomProp['linewidthFactor'][i])
             spin1 = atomProp['spin'][i]
             spin2 = MASTERISOTOPELIST[self.refAtom]['spin'][self.refIso]
             sens = atomProp['abundance'][i] / MASTERISOTOPELIST[self.refAtom]['abundance'][self.refIso] * np.abs(atomProp['gamma'][i]/MASTERISOTOPELIST[self.refAtom]['gamma'][self.refIso])**3 * spin1 * (spin1 + 1) / (spin2 * (spin2 + 1))
-            self.sensLabels[i].setText('%0.4g' %sens)
+            if np.isnan(sens):
+                self.sensLabels[i].setText('-')    
+            else:
+                self.sensLabels[i].setText('%0.4g' %sens)
         self.display(num)
 
     def refSelect(self, name):
