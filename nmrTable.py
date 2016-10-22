@@ -293,7 +293,7 @@ class DetailWindow(QtWidgets.QWidget):
         self.grid.addWidget(PtQLabel('Mass:'), 1, 1)
         self.grid.addWidget(PtQLabel('Spin:'), 1, 2)
         self.grid.addWidget(PtQLabel('Abundance [%]:'), 1, 3)
-        self.grid.addWidget(PtQLabel('Gamma [10<sup>7</sup> rad s<sup>-1</sup> T<sup>-1</sup>]:'), 1, 4)
+        self.grid.addWidget(PtQLabel(u'\u03B3 [10<sup>7</sup> rad s<sup>-1</sup> T<sup>-1</sup>]:'), 1, 4)
         self.grid.addWidget(PtQLabel('Q [fm<sup>2</sup>]:'), 1, 5)
         self.grid.addWidget(PtQLabel('Frequency [MHz]:'), 1, 6)
         self.grid.addWidget(PtQLabel('Sensitivity:'), 1, 7)
