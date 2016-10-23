@@ -395,8 +395,12 @@ class DetailWindow(QtWidgets.QWidget):
             else:
                 self.qLabels[i].setText(str(atomProp['q'][i]))
             self.freqEntries[i].setText(str(self.father.freqConst*atomProp['freqRatio'][i]))
-            self.sampleLabels[i].setText(str(atomProp['refSample'][i]))
-            self.conditionLabels[i].setText(str(atomProp['sampleCondition'][i]))
+            if sys.version_info < (3,): #check version for possible unicode tricks
+                self.sampleLabels[i].setText(atomProp['refSample'][i].decode('utf8'))
+                self.conditionLabels[i].setText(atomProp['sampleCondition'][i].decode('utf8'))
+            else:
+                self.sampleLabels[i].setText(atomProp['refSample'][i])
+                self.conditionLabels[i].setText(atomProp['sampleCondition'][i])
             if np.isnan(atomProp['linewidthFactor'][i]):
                 self.linewidthLabels[i].setText('-')
             else:

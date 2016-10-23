@@ -13,7 +13,7 @@ Atom	Nucleus	Name	Mass	Spin	Abundance(%)	Gamma	Q(fm^2)	FreqRatio	Refsample	Sampl
 7	N	Nitrogen	15	0.5	0.368	-2.71261804	0	10.136767	MeNO<sub>2</sub>	neat/CDCl<sub>3</sub>	-
 8	O	Oxygen	17	2.5	0.038	-3.62808	-2.558	13.556457	D<sub>2</sub>O	neat	-
 9	F	Fluor	19	0.5	100	25.18148	0	94.094011	CCl<sub>3</sub>F	-	-
-10	Ne	Neon	21	1.5	0.27	-2.11308	10.155	7.894296	Ne	Gas, 1.1 Mpa	-
+10	Ne	Neon	21	1.5	0.27	-2.11308	10.155	7.894296	Ne	Gas, 1.1 MPa	-
 11	Na	Natrium	23	1.5	100	7.0808493	10.4	26.451900	NaCl	D<sub>2</sub>O, 0.1 M	-
 12	Mg	Magnesium	25	2.5	10.00	-1.63887	19.94	6.121635	MgCl<sub>2</sub>	D<sub>2</sub>O, 11 M	-
 13	Al	Aluminium	27	2.5	100	6.9762715	14.66	26.056859	Al(NO<sub>3</sub>)<sub>3</sub>	D<sub>2</sub>O, 1.1 m	-
@@ -103,28 +103,28 @@ Atom	Nucleus	Name	Mass	Spin	Abundance(%)	Gamma	Q(fm^2)	FreqRatio	Refsample	Sampl
 67	Ho	Holmium	165	3.5	100	5.710	358.0	21.34	-	-	-
 68	Er	Erbium	167	3.5	22.93	-0.77157	356.5	2.88	-	-	-
 69	Tm	Thullum	169	0.5	100	-2.218	-	8.29	-	-	-
-70	Yb	Ytterbium	171	0.5	14.28	4.7288	-	17.499306	Yb(eta-C5Me5)2(THF)2	0.171 M in THF	-
+70	Yb	Ytterbium	171	0.5	14.28	4.7288	-	17.499306	Yb(η-C<sub>5</sub>Me<sub>5</sub>)<sub>2</sub>(THF)<sub>2</sub>	0.171 M in THF	-
 70	Yb	Ytterbium	173	2.5	16.13	-1.3025	280.0	4.821	-	-	-
 71	Lu	Lutetium	175	3.5	97.41	3.0552	349.0	11.404	-	-	-
 71	Lu	Lutetium	176	7	2.59	2.1684	497.0	8.131	-	-	3.73e10 y
 72	Hf	Hafniun	177	3.5	18.60	1.086	336.5	4.007	-	-	-
 72	Hf	Hafniun	179	4.5	13.62	-0.6821	379.3	2.517	-	-	-
-73	Ta	Tantalum	181	3.5	99.988	3.2438	317.0	11.989600	BKTaCl6	CH3CN, sat.	-
-74	W	Tungsten	183	0.5	14.31	1.1282403	0	4.166387	Na2WO4	D2O, 1 M	>4.1e21 y
-75	Re	Rhenium	185	2.5	37.40	6.1057	218.0	22.524600	KReO4	D2O, 0.1 M	-
-75	Re	Rhenium	187	2.5	62.60	6.1682	207.0	22.751600	BKReO4	D2O, 0.1 M	4.16e10 y
-76	Os	Osmium	187	0.5	1.96	0.6192895	0	2.282331	OsO4	CCl4, 0.98 M	-
-76	Os	Osmium	189	1.5	16.15	2.10713	85.6	7.765400	BOsO4	CCl4, 0.98 M	-
+73	Ta	Tantalum	181	3.5	99.988	3.2438	317.0	11.989600	BKTaCl<sub>6</sub>	CH<sub>3</sub>CN, sat.	-
+74	W	Tungsten	183	0.5	14.31	1.1282403	0	4.166387	Na<sub>2</sub>WO<sub>4</sub>	D<sub>2</sub>O, 1 M	>4.1e21 y
+75	Re	Rhenium	185	2.5	37.40	6.1057	218.0	22.524600	KReO<sub>4</sub>	D<sub>2</sub>O, 0.1 M	-
+75	Re	Rhenium	187	2.5	62.60	6.1682	207.0	22.751600	BKReO<sub>4</sub>	D<sub>2</sub>O, 0.1 M	4.16e10 y
+76	Os	Osmium	187	0.5	1.96	0.6192895	0	2.282331	OsO<sub>4</sub>	CCl<sub>4</sub>, 0.98 M	-
+76	Os	Osmium	189	1.5	16.15	2.10713	85.6	7.765400	BOsO<sub>4</sub>	CCl<sub>4</sub>, 0.98 M	-
 77	Ir	Iridium	191	1.5	37.3	0.4812	81.6	1.718	-	-	-
 77	Ir	Iridium	193	1.5	62.7	0.5227	75.1	1.871	-	-	-
-78	Pt	Platinum	195	0.5	33.832	5.8385	0	21.496784	Na2PtCl6	D2O, 1.2 M	7.3e18 a
+78	Pt	Platinum	195	0.5	33.832	5.8385	0	21.496784	Na<sub>2</sub>PtCl<sub>6</sub>	D<sub>2</sub>O, 1.2 M	7.3e18 y
 79	Au	Gold	197	1.5	100	0.473060	54.7	1.729	-	-	-
-80	Hg	Mercury	199	0.5	16.87	4.8457916	0	17.910822	Me2Hg	neat	-
-80	Hg	Mercury	201	1.5	13.18	-1.788769	38.6	6.611583	C(CH3)2Hg	neat	-
-81	Tl	Thalium	203	0.5	29.524	15.5393338	0	57.123200	T1(NO3)3	-	-
-81	Tl	Thalium	205	0.5	70.476	15.6921808	0	57.683838	T1(NO3)3	-	-
-82	Pb	Lead	207	0.5	22.1	5.58046	0	20.920599	Me4Pb	neat/C6D6	>1.9e21 y
-83	Bi	Bismuth	209	4.5	100	4.3750	-51.6	16.069288	Bi(NO3)2	HNO3/D2O/H2O	2.0e19 y
+80	Hg	Mercury	199	0.5	16.87	4.8457916	0	17.910822	Me<sub>2</sub>Hg	neat	-
+80	Hg	Mercury	201	1.5	13.18	-1.788769	38.6	6.611583	C(CH<sub>3</sub>)<sub>2</sub>Hg	neat	-
+81	Tl	Thalium	203	0.5	29.524	15.5393338	0	57.123200	Tl(NO<sub>3</sub>)<sub>3</sub>	-	-
+81	Tl	Thalium	205	0.5	70.476	15.6921808	0	57.683838	Tl(NO<sub>3</sub>)<sub>3</sub>	-	-
+82	Pb	Lead	207	0.5	22.1	5.58046	0	20.920599	Me<sub>4</sub>Pb	neat/C<sub>6</sub>D<sub>6</sub>	>1.9e21 y
+83	Bi	Bismuth	209	4.5	100	4.3750	-51.6	16.069288	Bi(NO<sub>3</sub>)<sub>2</sub>	HNO<sub>3</sub>/D<sub>2</sub>O/H<sub>2</sub>O	2.0e19 y
 84	Po	Polonium	209	0.5	-	7.35	0	27.5	-	-	128 y
 85	At	Astatine	-	-	-	-	-	-	-	-	-
 86	Rn	Radon	211	0.5	-	5.76	0	21.5	-	-	14.6 h
@@ -134,7 +134,7 @@ Atom	Nucleus	Name	Mass	Spin	Abundance(%)	Gamma	Q(fm^2)	FreqRatio	Refsample	Sampl
 89	Ac	Actinium	227	1.5	-	3.5	170	13	-	-	21.77 y
 90	Th	Thorium	229	2.5	-	0.40	430	1.5	-	-	7.93e3 y
 91	Pa	Protactinium	231	1.5	100	3.21	-172	12.0	-	-	3.25e4 y
-92	U	Uranium	235	3.5	0.7200	-0.52	493.6	1.841400	UF6	phi = 10% in C6D6	7.03e8 y
+92	U	Uranium	235	3.5	0.7200	-0.52	493.6	1.841400	UF<sub>6</sub>	C<sub>6</sub>D<sub>6</sub>, φ = 10% 	7.03e8 y
 93	Np	Neptunium	237	2.5	-	6.01	388.6	22.5	-	-	2.14e6 y
 94	Pu	Plutonium	239	0.5	-	0.974	0	3.63	-	-	2.410e4 y
 95	Am	Amercium	243	2.5	-	1.54	421	5.76	-	-	7.37e3 y
@@ -155,5 +155,7 @@ Atom	Nucleus	Name	Mass	Spin	Abundance(%)	Gamma	Q(fm^2)	FreqRatio	Refsample	Sampl
 110	Ds	Darmstadtium	-	-	-	-	-	-	-	-	-
 111	Rg	Roentgenium	-	-	-	-	-	-	-	-	-
 112	Cn	Copernicium	-	-	-	-	-	-	-	-	-
+113	Uut	Ununtrium	-	-	-	-	-	-	-	-	-
 114	Fl	Flerov­ium	-	-	-	-	-	-	-	-	-
+115	Uup	Ununpentium	-	-	-	-	-	-	-	-	-
 116	Lv	Liver­morium	-	-	-	-	-	-	-	-	-
