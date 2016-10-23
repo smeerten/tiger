@@ -6,8 +6,8 @@ Atom	Nucleus	Name	Mass	Spin	Abundance(%)	Gamma	Q(fm^2)	FreqRatio	Refsample	Sampl
 3	Li	Lithium	6	1	7.59	3.9371709	-0.0808	14.716086	LiCl	D<sub>2</sub>O, 9.7 m 	-
 3	Li	Lithium	7	1.5	92.41	10.3977013	-4.01	38.863797	LiCl	D<sub>2</sub>O, 9.7 m 	-
 4	Be	Berrylium	9	1.5	100	-3.759666	5.288	14.051813	BeSO<sub>4</sub>	D<sub>2</sub>O, 0.43 m	-
-5	B	Boron	10	3	19.9	2.8746786	8.459	10.743658	BF<sub>3</sub>.Et<sub>2</sub>O	CDCl<sub>3</sub>	-
-5	B	Boron	11	1.5	80.1	8.5847044	4.059	32.083974	BF<sub>3</sub>.Et<sub>2</sub>O	CDCl<sub>3</sub>	-
+5	B	Boron	10	3	19.9	2.8746786	8.459	10.743658	BF<sub>3</sub>·Et<sub>2</sub>O	CDCl<sub>3</sub>	-
+5	B	Boron	11	1.5	80.1	8.5847044	4.059	32.083974	BF<sub>3</sub>·Et<sub>2</sub>O	CDCl<sub>3</sub>	-
 6	C	Carbon	13	0.5	1.07	6.728284	0	25.145020	Me<sub>4</sub>Si	CDCl<sub>3</sub>, φ = 1%	-
 7	N	Nitrogen	14	1	99.632	1.9337792	2.044	7.226317	CH<sub>3</sub>NO<sub>2</sub>	neat/CDCl<sub>3</sub>	-
 7	N	Nitrogen	15	0.5	0.368	-2.71261804	0	10.136767	MeNO<sub>2</sub>	neat/CDCl<sub>3</sub>	-
@@ -114,7 +114,7 @@ Atom	Nucleus	Name	Mass	Spin	Abundance(%)	Gamma	Q(fm^2)	FreqRatio	Refsample	Sampl
 75	Re	Rhenium	185	2.5	37.40	6.1057	218.0	22.524600	KReO<sub>4</sub>	D<sub>2</sub>O, 0.1 M	-
 75	Re	Rhenium	187	2.5	62.60	6.1682	207.0	22.751600	BKReO<sub>4</sub>	D<sub>2</sub>O, 0.1 M	4.16e10 y
 76	Os	Osmium	187	0.5	1.96	0.6192895	0	2.282331	OsO<sub>4</sub>	CCl<sub>4</sub>, 0.98 M	-
-76	Os	Osmium	189	1.5	16.15	2.10713	85.6	7.765400	BOsO<sub>4</sub>	CCl<sub>4</sub>, 0.98 M	-
+76	Os	Osmium	189	1.5	16.15	2.10713	85.6	7.765400	OsO<sub>4</sub>	CCl<sub>4</sub>, 0.98 M	-
 77	Ir	Iridium	191	1.5	37.3	0.4812	81.6	1.718	-	-	-
 77	Ir	Iridium	193	1.5	62.7	0.5227	75.1	1.871	-	-	-
 78	Pt	Platinum	195	0.5	33.832	5.8385	0	21.496784	Na<sub>2</sub>PtCl<sub>6</sub>	D<sub>2</sub>O, 1.2 M	7.3e18 y
