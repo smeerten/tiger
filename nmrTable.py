@@ -142,7 +142,7 @@ class PeriodicTable(QtWidgets.QWidget):
         grid.addWidget(PtQLabel('Spin:'), 0, 4)
         splitVal = int(np.ceil(len(SPINNAMES)/2.0))
         for i in range(1, splitVal):
-            tmpWidget = QtGui.QWidget()
+            tmpWidget = QtWidgets.QWidget()
             self.legendEntries.append(PtQLineEdit(SPINNAMES[i]))
             self.legendEntries[-1].setReadOnly(True)
             grid.addWidget(self.legendEntries[-1], 0, i+4)
