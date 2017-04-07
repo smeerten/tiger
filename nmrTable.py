@@ -11,7 +11,7 @@ from safeEval import safeEval
 import os
 
 SPINNAMES = ['0', '1/2', '1', '3/2', '2', '5/2', '3', '7/2', '4', '9/2', '5', '11/2', '6', '13/2', '7', '15/2', '8', '17/2', '9']
-SPINCOLORS = ['white', 'blue', 'orange', 'green', 'yellow', 'red', 'lime', 'olive', 'lightBlue', 'maroon', 'gray', 'pink', 'magenta', 'black']
+SPINCOLORS = ['white', 'blue', 'orange', 'green', 'yellow', 'red', 'lime', 'olive', 'lightBlue', 'maroon', 'gray', 'pink', 'magenta', 'black', 'cyan', 'crimson', 'navy', 'beige']
 GAMMASCALE = 100 / 42.576
 ELECTRONSCALE = GAMMASCALE * 28.02495266
 with open(os.path.dirname(os.path.realpath(__file__)) + "/IsotopeProperties") as isoFile:
