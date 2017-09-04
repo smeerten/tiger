@@ -140,6 +140,12 @@ class PeriodicTable(QtWidgets.QWidget):
         self.electronEntry = PtQLineEdit()
         self.electronEntry.returnPressed.connect(self.setElectron)
         grid.addWidget(self.electronEntry, 1, 3)
+        self.electronEntry.returnPressed.connect(self.setElectron)
+        grid.addWidget(self.electronEntry, 1, 3)
+
+        self.detailsPush = QtWidgets.QPushButton('Details')
+        self.detailsPush.pressed.connect(lambda : self.openWindow(None, 0))
+        grid.addWidget(self.detailsPush, 1, 4,1,2)
         grid.addWidget(PtQLabel('Spin:'), 0, 4)
         splitVal = int(np.ceil(len(SPINNAMES)/2.0))
         for i in range(1, splitVal):
