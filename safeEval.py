@@ -34,5 +34,5 @@ def safeEval(inp, length=None):
     inp = re.sub('([0-9]+)[k,K]', '\g<1>*1024', str(inp))
     try:
         return eval(inp, env)
-    except:
+    except Exception:
         return None
