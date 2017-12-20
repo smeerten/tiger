@@ -171,6 +171,9 @@ class PeriodicTable(QtWidgets.QWidget):
         self.detailsPush = QtWidgets.QPushButton('Details')
         self.detailsPush.pressed.connect(lambda : self.openWindow(None, 0))
         grid.addWidget(self.detailsPush, 1, 4,1,2)
+        self.listPush = QtWidgets.QPushButton('List')
+        self.listPush.pressed.connect(lambda : self.openList())
+        grid.addWidget(self.listPush, 1, 6,1,2)
         grid.addWidget(PtQLabel('Spin:'), 0, 4)
         splitVal = int(np.ceil(len(SPINNAMES) / 2.0))
         for i in range(1, splitVal):
@@ -255,6 +258,9 @@ class PeriodicTable(QtWidgets.QWidget):
 
     def openWindow(self, event, n):
         self.windowList.append(DetailWindow(self, n))
+
+    def openList(self):
+        self.windowList.append(ListWindow(self))
 
     def removeWindow(self, win):
         self.windowList.remove(win)
@@ -496,6 +502,66 @@ class DetailWindow(QtWidgets.QWidget):
         super(DetailWindow, self).closeEvent(event)
         self.father.removeWindow(self)
 
+class tableItem(QtWidgets.QTableWidgetItem):
+
+    def __init__(self, parent, *args, **kwargs):
+        super(tableItem, self).__init__(parent, *args, **kwargs)
+        self.setFlags(QtCore.Qt.ItemIsEnabled)
+
+class ListWindow(QtWidgets.QWidget):
+
+    def __init__(self, parent):
+        super(ListWindow, self).__init__()
+        self.setWindowTitle('List')
+        self.father = parent
+        grid = QtWidgets.QGridLayout(self)
+        self.table = QtWidgets.QTableWidget(1,6)
+        self.table.setHorizontalHeaderLabels(['Nucleus','Spin','Abundance [%]','Q [fm^2]','Frequency ratio [%]',
+            'Receptivity'])
+        grid.addWidget(self.table, 0, 0,1,6)
+        #grid.setRowStretch(3, 2)
+        #grid.setRowStretch(2, 1)
+        spinName = ['1/2','1','3/2','2','5/2','3','7/2','4','9/2','5','6','7']
+        spinVals = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7]
+
+        count = 0
+        for elem in MASTERISOTOPELIST:
+            if elem['mass'] is not None:
+                for i in range(len(elem['mass'])):
+                    self.table.setRowCount(count + 1)
+                    self.table.setItem(count,0,tableItem(str(int(elem['mass'][i])) +
+                        elem['name'][i]))
+                    Spin = elem['spin'][i]
+                    Spin = spinName[spinVals.index(Spin)]
+                    self.table.setItem(count,1,tableItem(Spin))
+
+                    Abun = elem['abundance'][i]
+                    if np.isnan(Abun):
+                        Abun = '-'
+                    else:
+                        Abun = str(Abun)
+                    self.table.setItem(count,2,tableItem(Abun))
+                    Q = elem['q'][i]
+                    if np.isnan(Q):
+                        Q = '-'
+                    else:
+                        Q = str(Q)
+                    self.table.setItem(count,3,tableItem(Q))
+                    self.table.setItem(count,4,tableItem(str(elem['freqRatio'][i])))
+
+                    sens = elem['abundance'][i] / MASTERISOTOPELIST[0]['abundance'][0] * np.abs(elem['gamma'][i] / MASTERISOTOPELIST[0]['gamma'][0])**3 * 0.5 * (0.5 + 1) / (elem['spin'][i] * (elem['spin'][i] + 1))
+                    if np.isnan(sens):
+                        sens = '-'
+                    else:
+                        sens = str(sens)
+                    self.table.setItem(count,5,tableItem(sens))
+                    count += 1
+        #self.table.setSortingEnabled(True)
+        self.show()
+
+    def closeEvent(self, event):
+        super(ListWindow, self).closeEvent(event)
+        self.father.removeWindow(self)
 
 class PtQLabel(QtWidgets.QLabel):
     def __init__(self, parent=None):
