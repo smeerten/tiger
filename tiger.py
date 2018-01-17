@@ -515,9 +515,11 @@ class ListWindow(QtWidgets.QWidget):
         self.setWindowTitle('List')
         self.father = parent
         grid = QtWidgets.QGridLayout(self)
-        self.table = QtWidgets.QTableWidget(1,6)
-        self.table.setHorizontalHeaderLabels(['Nucleus','Spin','Abundance [%]','Q [fm^2]','Frequency ratio [%]',
-            'Receptivity'])
+        self.table = QtWidgets.QTableWidget(1,7)
+        self.table.horizontalHeader().setResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        self.table.verticalHeader().setVisible(False)
+        self.table.setHorizontalHeaderLabels(['Nucleus','Name','Spin','Abundance [%]','Q [fm^2]','Frequency ratio [%]',
+            'Sensitivity [1H]'])
         grid.addWidget(self.table, 0, 0,1,6)
         #grid.setRowStretch(3, 2)
         #grid.setRowStretch(2, 1)
@@ -531,32 +533,34 @@ class ListWindow(QtWidgets.QWidget):
                     self.table.setRowCount(count + 1)
                     self.table.setItem(count,0,tableItem(str(int(elem['mass'][i])) +
                         elem['name'][i]))
+                    self.table.setItem(count,1,tableItem(elem['fullName'][i]))
                     Spin = elem['spin'][i]
                     Spin = spinName[spinVals.index(Spin)]
-                    self.table.setItem(count,1,tableItem(Spin))
+                    self.table.setItem(count,2,tableItem(Spin))
 
                     Abun = elem['abundance'][i]
                     if np.isnan(Abun):
                         Abun = '-'
                     else:
                         Abun = str(Abun)
-                    self.table.setItem(count,2,tableItem(Abun))
+                    self.table.setItem(count,3,tableItem(Abun))
                     Q = elem['q'][i]
                     if np.isnan(Q):
                         Q = '-'
                     else:
                         Q = str(Q)
-                    self.table.setItem(count,3,tableItem(Q))
-                    self.table.setItem(count,4,tableItem(str(elem['freqRatio'][i])))
+                    self.table.setItem(count,4,tableItem(Q))
+                    self.table.setItem(count,5,tableItem(str(elem['freqRatio'][i])))
 
                     sens = elem['abundance'][i] / MASTERISOTOPELIST[0]['abundance'][0] * np.abs(elem['gamma'][i] / MASTERISOTOPELIST[0]['gamma'][0])**3 * 0.5 * (0.5 + 1) / (elem['spin'][i] * (elem['spin'][i] + 1))
                     if np.isnan(sens):
                         sens = '-'
                     else:
                         sens = str(sens)
-                    self.table.setItem(count,5,tableItem(sens))
+                    self.table.setItem(count,6,tableItem(sens))
                     count += 1
         #self.table.setSortingEnabled(True)
+        self.resize(800, 600)
         self.show()
 
     def closeEvent(self, event):
