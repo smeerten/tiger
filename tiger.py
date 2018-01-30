@@ -23,8 +23,10 @@ import sys
 try:
     from PyQt4 import QtGui, QtCore
     from PyQt4 import QtGui as QtWidgets
+    QT = 4
 except ImportError:
     from PyQt5 import QtGui, QtCore, QtWidgets
+    QT = 5
 import csv
 from safeEval import safeEval
 import os
@@ -516,7 +518,10 @@ class ListWindow(QtWidgets.QWidget):
         self.father = parent
         grid = QtWidgets.QGridLayout(self)
         self.table = QtWidgets.QTableWidget(1,7)
-        self.table.horizontalHeader().setResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        if QT == 4:
+            self.table.horizontalHeader().setResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+        elif QT == 5:
+            self.table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.table.verticalHeader().setVisible(False)
         self.table.setHorizontalHeaderLabels(['Nucleus','Name','Spin','Abundance [%]','Q [fm^2]','Frequency ratio [%]',
             'Sensitivity [1H]'])
