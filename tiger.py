@@ -516,57 +516,90 @@ class ListWindow(QtWidgets.QWidget):
         super(ListWindow, self).__init__()
         self.setWindowTitle('List')
         self.father = parent
+
         grid = QtWidgets.QGridLayout(self)
-        self.table = QtWidgets.QTableWidget(1,7)
+
+
+        grid.addWidget(PtQLabel('Order:'), 0, 0)
+        self.orderType = QtWidgets.QComboBox()
+        self.orderType.addItems(['Element number','Frequency (Descending)','Frequency (Ascending)',  'Spin (Descending)', 'Spin (Ascending)','Q (Descending)', 'Q (Ascending)',
+            'Abundance (Descending)', 'Abundance (Ascending)','Sensitivity (Descending)', 'Sensitivity (Ascending)'])
+        self.orderType.currentIndexChanged.connect(self.upd)
+        grid.addWidget(self.orderType,0,1)
+
+        self.table = QtWidgets.QTableWidget(1,8)
         if QT == 4:
             self.table.horizontalHeader().setResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         elif QT == 5:
             self.table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.table.verticalHeader().setVisible(False)
         self.table.setHorizontalHeaderLabels(['Nucleus','Name','Spin','Abundance [%]','Q [fm^2]','Frequency ratio [%]',
-            'Sensitivity [1H]'])
-        grid.addWidget(self.table, 0, 0,1,6)
-        #grid.setRowStretch(3, 2)
-        #grid.setRowStretch(2, 1)
-        spinName = ['1/2','1','3/2','2','5/2','3','7/2','4','9/2','5','6','7']
-        spinVals = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7]
+            'Frequency [MHz]','Sensitivity [1H]'])
 
+        grid.addWidget(self.table, 1, 0,1,6)
+        #grid.setRowStretch(3, 2)
+        grid.setColumnStretch(5, 1)
+        self.spinName = ['1/2','1','3/2','2','5/2','3','7/2','4','9/2','5','6','7']
+        self.spinVals = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7]
+        self.upd()
+        self.resize(900, 800)
+        self.show()
+
+    def upd(self):
         count = 0
+        isotopes = []
         for elem in MASTERISOTOPELIST:
             if elem['mass'] is not None:
                 for i in range(len(elem['mass'])):
-                    self.table.setRowCount(count + 1)
-                    self.table.setItem(count,0,tableItem(str(int(elem['mass'][i])) +
-                        elem['name'][i]))
-                    self.table.setItem(count,1,tableItem(elem['fullName'][i]))
-                    Spin = elem['spin'][i]
-                    Spin = spinName[spinVals.index(Spin)]
-                    self.table.setItem(count,2,tableItem(Spin))
+                    isotopes.append( {'mass':elem['mass'][i],  'name': elem['name'][i], 'fullName':elem['fullName'][i],
+                        'spin': elem['spin'][i], 'abundance': elem['abundance'][i],'q': elem['q'][i],'freqRatio': elem['freqRatio'][i],
+                        'gamma': elem['gamma'][i],})
 
-                    Abun = elem['abundance'][i]
-                    if np.isnan(Abun):
-                        Abun = '-'
-                    else:
-                        Abun = str(Abun)
-                    self.table.setItem(count,3,tableItem(Abun))
-                    Q = elem['q'][i]
-                    if np.isnan(Q):
-                        Q = '-'
-                    else:
-                        Q = str(Q)
-                    self.table.setItem(count,4,tableItem(Q))
-                    self.table.setItem(count,5,tableItem(str(elem['freqRatio'][i])))
+                    sens = {'sens': isotopes[-1]['abundance'] / MASTERISOTOPELIST[0]['abundance'][0] * np.abs(isotopes[-1]['gamma'] / MASTERISOTOPELIST[0]['gamma'][0])**3 * 0.5 * (0.5 + 1) / (isotopes[-1]['spin'] * (isotopes[-1]['spin'] + 1))}
+                    isotopes[-1].update(sens)
 
-                    sens = elem['abundance'][i] / MASTERISOTOPELIST[0]['abundance'][0] * np.abs(elem['gamma'][i] / MASTERISOTOPELIST[0]['gamma'][0])**3 * 0.5 * (0.5 + 1) / (elem['spin'][i] * (elem['spin'][i] + 1))
-                    if np.isnan(sens):
-                        sens = '-'
-                    else:
-                        sens = str(sens)
-                    self.table.setItem(count,6,tableItem(sens))
-                    count += 1
-        #self.table.setSortingEnabled(True)
-        self.resize(800, 600)
-        self.show()
+        orderType = self.orderType.currentIndex()
+        if orderType != 0:
+            orderings = [['freqRatio', True],['freqRatio', False],['spin', True],['spin', False],['q', True],['q', False],['abundance', True],['abundance', False],
+                    ['sens', True],['sens', False]]
+            actions = orderings[orderType - 1]
+
+            tmp = []
+            for elem in isotopes:
+                tmp.append(elem[actions[0]])
+            order = np.argsort(tmp)
+            if actions[1]:
+                order = order[::-1]
+            isotopes = [isotopes[x] for x in order]
+
+        for elem in isotopes:
+            self.table.setRowCount(count + 1)
+            self.table.setItem(count,0,tableItem(str(int(elem['mass'])) + elem['name']))
+            self.table.setItem(count,1,tableItem(elem['fullName']))
+            Spin = elem['spin']
+            Spin = self.spinName[self.spinVals.index(Spin)]
+            self.table.setItem(count,2,tableItem(Spin))
+            Abun = elem['abundance']
+            if np.isnan(Abun):
+                Abun = '-'
+            else:
+                Abun = str(Abun)
+            self.table.setItem(count,3,tableItem(Abun))
+            Q = elem['q']
+            if np.isnan(Q):
+                Q = '-'
+            else:
+                Q = str(Q)
+            self.table.setItem(count,4,tableItem(Q))
+            self.table.setItem(count,5,tableItem(str(elem['freqRatio'])))
+            self.table.setItem(count,6,tableItem(str(elem['freqRatio'] * self.father.freqConst)))
+            sens = elem['sens']
+            if np.isnan(sens):
+                sens = '-'
+            else:
+                sens = str(sens)
+            self.table.setItem(count,7,tableItem(sens))
+            count += 1
 
     def closeEvent(self, event):
         super(ListWindow, self).closeEvent(event)
