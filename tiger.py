@@ -21,13 +21,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
-try:
-    from PyQt4 import QtGui, QtCore
-    from PyQt4 import QtGui as QtWidgets
-    QT = 4
-except ImportError:
-    from PyQt5 import QtGui, QtCore, QtWidgets
-    QT = 5
+from PyQt5 import QtGui, QtCore, QtWidgets
+QT = 5
 import csv
 from safeEval import safeEval
 import os
@@ -42,7 +37,7 @@ SPINCOLORS = ['white', 'blue', 'orange', 'green', 'yellow',
               'crimson', 'navy', 'beige']
 GAMMASCALE = 100 / 42.576
 ELECTRONSCALE = GAMMASCALE * 28.02495266
-with open(os.path.dirname(os.path.realpath(__file__)) + "/IsotopeProperties") as isoFile:
+with open(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "IsotopeProperties", encoding = 'UTF-8') as isoFile:
     isoList = [line.strip().split('\t') for line in isoFile]
 isoList = isoList[1:]
 N = len(isoList)
