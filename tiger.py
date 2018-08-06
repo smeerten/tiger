@@ -19,7 +19,6 @@
 # along with Tiger. If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
-import matplotlib.pyplot as plt
 import sys
 from PyQt5 import QtGui, QtCore, QtWidgets
 QT = 5
@@ -37,8 +36,13 @@ SPINCOLORS = ['white', 'blue', 'orange', 'green', 'yellow',
               'crimson', 'navy', 'beige']
 GAMMASCALE = 100 / 42.576
 ELECTRONSCALE = GAMMASCALE * 28.02495266
-with open(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "IsotopeProperties", encoding = 'UTF-8') as isoFile:
-    isoList = [line.strip().split('\t') for line in isoFile]
+if sys.version_info < (3,):  
+    with open(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "IsotopeProperties") as isoFile:
+        isoList = [line.strip().split('\t') for line in isoFile]
+else:
+    with open(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "IsotopeProperties", encoding = 'UTF-8') as isoFile:
+        isoList = [line.strip().split('\t') for line in isoFile]
+
 isoList = isoList[1:]
 N = len(isoList)
 nameList = []
