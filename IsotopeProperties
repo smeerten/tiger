@@ -1,5 +1,5 @@
 Atom	Nucleus	Name	Mass	Spin	Abundance(%)	Gamma	Q(fm^2)	FreqRatio	Refsample	SampleCondition	Lifetime(y)
-1	H	Hydrogen	1	0.5	99.9885	26.7522128	0	100.000000	Me<sub>4</sub>Si	CDCl<sub>3</sub>, φ = 1%	-
+1	H	Hydrogen	1	0.5	99.9885	26.7522128	-	100.000000	Me<sub>4</sub>Si	CDCl<sub>3</sub>, φ = 1%	-
 1	H	Hydrogen	2	1	0.0115	4.10662791	0.2860	15.350609	(CD<sub>3</sub>)<sub>4</sub>Si	neat	-
 1	H	Hydrogen	3	0.5	-	28.5349779	0	106.663974	Me<sub>4</sub>Si-t1	-	12.32 y
 2	He	Helium	3	0.5	1.37e-4	-20.3801587	0	76.179437	He	gas	-
@@ -155,7 +155,9 @@ Atom	Nucleus	Name	Mass	Spin	Abundance(%)	Gamma	Q(fm^2)	FreqRatio	Refsample	Sampl
 110	Ds	Darmstadtium	-	-	-	-	-	-	-	-	-
 111	Rg	Roentgenium	-	-	-	-	-	-	-	-	-
 112	Cn	Copernicium	-	-	-	-	-	-	-	-	-
-113	Uut	Ununtrium	-	-	-	-	-	-	-	-	-
-114	Fl	Flerov­ium	-	-	-	-	-	-	-	-	-
-115	Uup	Ununpentium	-	-	-	-	-	-	-	-	-
-116	Lv	Liver­morium	-	-	-	-	-	-	-	-	-
+113	Nh	Nihonium	-	-	-	-	-	-	-	-	-
+114	Fl	Flerovium	-	-	-	-	-	-	-	-	-
+115	Mc	Moscovium	-	-	-	-	-	-	-	-	-
+116	Lv	Livermorium	-	-	-	-	-	-	-	-	-
+117	Ts	Tennessine	-	-	-	-	-	-	-	-	-
+118	Og	Oganesson	-	-	-	-	-	-	-	-	-
