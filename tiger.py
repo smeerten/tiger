@@ -19,9 +19,13 @@
 # along with Tiger. If not, see <http://www.gnu.org/licenses/>.
 
 import sys
-from PyQt5 import QtGui, QtCore, QtWidgets
-QT = 5
-import csv
+try:
+    from PyQt4 import QtGui, QtCore
+    from PyQt4 import QtGui as QtWidgets
+    QT = 4
+except ImportError:
+    from PyQt5 import QtGui, QtCore, QtWidgets
+    QT = 5
 from safeEval import safeEval
 import os
 import math
@@ -43,102 +47,110 @@ else:
     with open(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "IsotopeProperties", encoding = 'UTF-8') as isoFile:
         isoList = [line.strip().split('\t') for line in isoFile]
 
-isoList = isoList[1:]
+isoList = isoList[1:] #Cut off header
 N = len(isoList)
 nameList = []
 fullNameList = []
 formatNameList = []
-atomNumList = [None] * N
-atomMassList = [None] * N
-spinList = [None] * N
-abundanceList = [None] * N
-gammaList = [None] * N
-qList = [None] * N
-freqRatioList = [None] * N
+atomNumList = []
+atomMassList = []
+spinList = []
+abundanceList = [] 
+gammaList = [] 
+qList = []
+freqRatioList = []
 refSampleList = []
 sampleConditionList = []
-linewidthFactorList = [None] * N
+linewidthFactorList = [] 
 lifetimeList = []
+sensList = []
 
 for i in range(N):
     isoN = isoList[i]
-    atomNumList[i] = int(isoN[0])
+    atomNumList.append(int(isoN[0]))
     nameList.append(isoN[1])
     fullNameList.append(isoN[2])
     if isoN[3] == '-':
-        atomMassList[i] = None
+        atomMassList.append(None)
         formatNameList.append(nameList[-1])
     else:
-        atomMassList[i] = int(isoN[3])
+        atomMassList.append(int(isoN[3]))
         formatNameList.append('%d' % (atomMassList[i]) + nameList[-1])
     if isoN[4] == '-':
-        spinList[i] = None
+        spinList.append(None)
     else:
-        spinList[i] = float(isoN[4])
+        spinList.append(float(isoN[4]))
     if isoN[5] == '-':
-        abundanceList[i] = None
+        abundanceList.append(None)
     else:
-        abundanceList[i] = float(isoN[5])
+        abundanceList.append(float(isoN[5]))
     if isoN[6] == '-':
-        gammaList[i] = None
+        gammaList.append(None)
     else:
-        gammaList[i] = float(isoN[6])
+        gammaList.append(float(isoN[6]))
     if isoN[7] == '-':
-        qList[i] = None
+        qList.append(None)
     else:
-        qList[i] = float(isoN[7])
+        qList.append(float(isoN[7]))
     if isoN[8] == '-':
-        freqRatioList[i] = None
+        freqRatioList.append(None)
     else:
-        freqRatioList[i] = float(isoN[8])
+        freqRatioList.append(float(isoN[8]))
     refSampleList.append(isoN[9])
     sampleConditionList.append(isoN[10])
     if isoN[4] == '0.5' or spinList[i] is None or qList[i] is None:
-        linewidthFactorList[i] = None
+        linewidthFactorList.append(None)
     else:
-        linewidthFactorList[i] = (2 * spinList[i] + 3) * qList[i]**2 / (spinList[i]**2 * (2 * spinList[i] - 1))
-    if isoN[11] == '-':
-        lifetimeList.append('-')
+        linewidthFactorList.append((2 * spinList[i] + 3) * qList[i]**2 / (spinList[i]**2 * (2 * spinList[i] - 1)))
+        
+    if gammaList[-1] is not None and abundanceList[-1] is not None and spinList[-1] is not None:
+        sensList.append(abundanceList[-1] * abs(gammaList[-1])**3 * spinList[-1] * (spinList[-1] + 1))
     else:
-        lifetimeList.append(isoN[11])
+        sensList.append(None)
+
+    lifetimeList.append(isoN[11])
 
 # Create a list of structures containing the isotope information
 ATOMNUM = max(atomNumList)
 MASTERISOTOPELIST = []
 LONGEST = 0
 for i in range(ATOMNUM):
-    Vals = [j for j,val in enumerate(atomNumList) if val==i+1]
+    Vals = [j for j,val in enumerate(atomNumList) if val==i+1] #Position of all elements with val == i+1
+    isotopeEntry = {'name': [],
+                      'fullName': [],
+                      'mass': [],
+                      'spin': [],
+                      'abundance': [],
+                      'gamma': [],
+                      'q': [],
+                      'freqRatio': [],
+                      'refSample': [],
+                      'sampleCondition': [],
+                      'linewidthFactor': [],
+                      'lifetime': [],
+                      'sensitivity': []}
+    for elem in Vals:
+        isotopeEntry['name'].append(nameList[elem])
+        isotopeEntry['fullName'].append(fullNameList[elem])
+        isotopeEntry['mass'].append(atomMassList[elem])
+        isotopeEntry['spin'].append(spinList[elem])
+        isotopeEntry['abundance'].append(abundanceList[elem])
+        isotopeEntry['gamma'].append(gammaList[elem])
+        isotopeEntry['q'].append(qList[elem])
+        isotopeEntry['freqRatio'].append(freqRatioList[elem])
+        isotopeEntry['refSample'].append(refSampleList[elem])
+        isotopeEntry['sampleCondition'].append(sampleConditionList[elem])
+        isotopeEntry['linewidthFactor'].append(linewidthFactorList[elem])
+        isotopeEntry['lifetime'].append(lifetimeList[elem])
+        isotopeEntry['sensitivity'].append(sensList[elem])
 
-    name = [nameList[pos] for pos in Vals]
-    fullName = [fullNameList[pos] for pos in Vals]
-    mass = [atomMassList[pos] for pos in Vals]
-    spin = [spinList[pos] for pos in Vals]
-    abundance  = [abundanceList[pos] for pos in Vals]
-    gamma  = [gammaList[pos] for pos in Vals]
-    q  = [qList[pos] for pos in Vals]
-    freqRatio  = [freqRatioList[pos] for pos in Vals]
-    refSample  = [refSampleList[pos] for pos in Vals]
-    sampleCondition  = [sampleConditionList[pos] for pos in Vals]
-    linewidthFactor  = [linewidthFactorList[pos] for pos in Vals]
-    lifetime  = [lifetimeList[pos] for pos in Vals]
+
     LONGEST = max(LONGEST, len(Vals))
 
-    isotopeEntries = {'name': name,
-                      'fullName': fullName,
-                      'mass': mass,
-                      'spin': spin,
-                      'abundance': abundance,
-                      'gamma': gamma,
-                      'q': q,
-                      'freqRatio': freqRatio,
-                      'refSample': refSample,
-                      'sampleCondition': sampleCondition,
-                      'linewidthFactor': linewidthFactor,
-                      'lifetime': lifetime, }
     if len(Vals) > 0:
-        if isotopeEntries['mass'].count(None) == len(Vals): #If all 'None'
-            isotopeEntries['mass'] = None
-        MASTERISOTOPELIST.append(isotopeEntries)
+        if isotopeEntry['mass'].count(None) == len(Vals): #If all 'None'
+            isotopeEntry['mass'] = None
+        MASTERISOTOPELIST.append(isotopeEntry)
     else:
         MASTERISOTOPELIST.append(None)
 nameList = sorted(set(nameList))
@@ -468,14 +480,11 @@ class DetailWindow(QtWidgets.QWidget):
                 self.linewidthLabels[i].setText('%#2.2f' % atomProp['linewidthFactor'][i])
             spin1 = atomProp['spin'][i]
             spin2 = MASTERISOTOPELIST[self.refAtom]['spin'][self.refIso]
-            if atomProp['abundance'][i] is None or MASTERISOTOPELIST[self.refAtom]['abundance'][self.refIso] is None :
+            if atomProp['sensitivity'][i] is None or MASTERISOTOPELIST[self.refAtom]['sensitivity'][self.refIso] is None :
                 self.sensLabels[i].setText('-')
             else:
-                if atomProp['abundance'][i] == 0.0 or MASTERISOTOPELIST[self.refAtom]['abundance'][self.refIso] == 0.0:
-                    self.sensLabels[i].setText('inf')
-                else:
-                    sens = atomProp['abundance'][i] / MASTERISOTOPELIST[self.refAtom]['abundance'][self.refIso] * abs(atomProp['gamma'][i] / MASTERISOTOPELIST[self.refAtom]['gamma'][self.refIso])**3 * spin1 * (spin1 + 1) / (spin2 * (spin2 + 1))
-                    self.sensLabels[i].setText('%0.4g' % sens)
+                sens = atomProp['sensitivity'][i] / MASTERISOTOPELIST[self.refAtom]['sensitivity'][self.refIso]
+                self.sensLabels[i].setText('%0.4g' % sens)
         self.display(num)
 
     def refSelect(self, name):
@@ -576,13 +585,12 @@ class ListWindow(QtWidgets.QWidget):
                     isotopes.append( {'mass':elem['mass'][i],  'name': elem['name'][i], 'fullName':elem['fullName'][i],
                         'spin': elem['spin'][i], 'abundance': elem['abundance'][i],'q': elem['q'][i],'freqRatio': elem['freqRatio'][i],
                         'gamma': elem['gamma'][i],})
-                    if isotopes[-1]['abundance'] is None or MASTERISOTOPELIST[0]['abundance'][0] is None :
+
+                    if elem['sensitivity'][i] is None or MASTERISOTOPELIST[0]['sensitivity'][0] is None:
                         sens = {'sens': None}
                     else:
-                        if isotopes[-1]['abundance'] == 0.0 or MASTERISOTOPELIST[0]['abundance'][0] == 0.0:
-                            sens = {'sens': None}
-                        else:
-                            sens = {'sens': isotopes[-1]['abundance'] / MASTERISOTOPELIST[0]['abundance'][0] * abs(isotopes[-1]['gamma'] / MASTERISOTOPELIST[0]['gamma'][0])**3 * 0.5 * (0.5 + 1) / (isotopes[-1]['spin'] * (isotopes[-1]['spin'] + 1))}
+                        sensTmp = elem['sensitivity'][i] / MASTERISOTOPELIST[0]['sensitivity'][0]
+                        sens = {'sens': sensTmp}
                     isotopes[-1].update(sens)
 
         orderType = self.orderType.currentIndex()
