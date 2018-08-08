@@ -40,15 +40,16 @@ SPINCOLORS = ['white', 'blue', 'orange', 'green', 'yellow',
               'crimson', 'navy', 'beige']
 GAMMASCALE = 100 / 42.576
 ELECTRONSCALE = GAMMASCALE * 28.02495266
+
+isoPath = os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "IsotopeProperties"
 if sys.version_info < (3,):  
-    with open(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "IsotopeProperties") as isoFile:
+    with open(isoPath) as isoFile:
         isoList = [line.strip().split('\t') for line in isoFile]
 else:
-    with open(os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "IsotopeProperties", encoding = 'UTF-8') as isoFile:
+    with open(isoPath, encoding = 'UTF-8') as isoFile:
         isoList = [line.strip().split('\t') for line in isoFile]
 
 isoList = isoList[1:] #Cut off header
-N = len(isoList)
 nameList = []
 fullNameList = []
 formatNameList = []
@@ -65,7 +66,7 @@ linewidthFactorList = []
 lifetimeList = []
 sensList = []
 
-for i in range(N):
+for i in range(len(isoList)):
     isoN = isoList[i]
     atomNumList.append(int(isoN[0]))
     nameList.append(isoN[1])
@@ -107,7 +108,6 @@ for i in range(N):
         sensList.append(abundanceList[-1] * abs(gammaList[-1])**3 * spinList[-1] * (spinList[-1] + 1))
     else:
         sensList.append(None)
-
     lifetimeList.append(isoN[11])
 
 # Create a list of structures containing the isotope information
@@ -115,7 +115,6 @@ ATOMNUM = max(atomNumList)
 MASTERISOTOPELIST = []
 LONGEST = 0
 for i in range(ATOMNUM):
-    Vals = [j for j,val in enumerate(atomNumList) if val==i+1] #Position of all elements with val == i+1
     isotopeEntry = {'name': [],
                       'fullName': [],
                       'mass': [],
@@ -129,6 +128,7 @@ for i in range(ATOMNUM):
                       'linewidthFactor': [],
                       'lifetime': [],
                       'sensitivity': []}
+    Vals = [j for j,val in enumerate(atomNumList) if val==i+1] #Position of all elements with val == i+1
     for elem in Vals:
         isotopeEntry['name'].append(nameList[elem])
         isotopeEntry['fullName'].append(fullNameList[elem])
@@ -144,9 +144,7 @@ for i in range(ATOMNUM):
         isotopeEntry['lifetime'].append(lifetimeList[elem])
         isotopeEntry['sensitivity'].append(sensList[elem])
 
-
     LONGEST = max(LONGEST, len(Vals))
-
     if len(Vals) > 0:
         if isotopeEntry['mass'].count(None) == len(Vals): #If all 'None'
             isotopeEntry['mass'] = None
@@ -169,10 +167,10 @@ class PeriodicTable(QtWidgets.QWidget):
         self.isoSelect = [0] * ATOMNUM
         for i in range(ATOMNUM):
             if MASTERISOTOPELIST[i] is not None:
-                if MASTERISOTOPELIST[i]['abundance'].count(None) == len(MASTERISOTOPELIST[i]['abundance']): #If all 'None'
+                if MASTERISOTOPELIST[i]['sensitivity'].count(None) == len(MASTERISOTOPELIST[i]['sensitivity']): #If all 'None'
                     self.isoSelect[i] = 0
                 else:
-                    tmp = [float(x) for x in MASTERISOTOPELIST[i]['abundance'] if x is not None]
+                    tmp = [float(x) for x in MASTERISOTOPELIST[i]['sensitivity'] if x is not None]
                     max_value = max(tmp)
                     self.isoSelect[i] = tmp.index(max_value)
             else:
