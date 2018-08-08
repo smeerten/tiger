@@ -30,6 +30,13 @@ from safeEval import safeEval
 import os
 import math
 
+def fOrNone(inp):
+    #Convert to float is possible, otherwise None
+    if inp == '-':
+        return None
+    else:
+        return float(inp)
+
 SPINNAMES = ['0', '1/2', '1', '3/2', '2',
              '5/2', '3', '7/2', '4', '9/2',
              '5', '11/2', '6', '13/2', '7',
@@ -66,45 +73,32 @@ linewidthFactorList = []
 lifetimeList = []
 sensList = []
 
+
+
 for i in range(len(isoList)):
     isoN = isoList[i]
     atomNumList.append(int(isoN[0]))
     nameList.append(isoN[1])
     fullNameList.append(isoN[2])
-    if isoN[3] == '-':
-        atomMassList.append(None)
-        formatNameList.append(nameList[-1])
-    else:
-        atomMassList.append(int(isoN[3]))
-        formatNameList.append('%d' % (atomMassList[i]) + nameList[-1])
-    if isoN[4] == '-':
-        spinList.append(None)
-    else:
-        spinList.append(float(isoN[4]))
-    if isoN[5] == '-':
-        abundanceList.append(None)
-    else:
-        abundanceList.append(float(isoN[5]))
-    if isoN[6] == '-':
-        gammaList.append(None)
-    else:
-        gammaList.append(float(isoN[6]))
-    if isoN[7] == '-':
-        qList.append(None)
-    else:
-        qList.append(float(isoN[7]))
-    if isoN[8] == '-':
-        freqRatioList.append(None)
-    else:
-        freqRatioList.append(float(isoN[8]))
+    atomMassList.append(fOrNone(isoN[3]))
+    formatNameList.append(nameList[-1])
+    if atomMassList[-1] is not None:
+        formatNameList[-1] = '%d' % (atomMassList[i]) + formatNameList[-1]
+    spinList.append(fOrNone(isoN[4]))
+    abundanceList.append(fOrNone(isoN[5]))
+    gammaList.append(fOrNone(isoN[6]))
+    qList.append(fOrNone(isoN[7]))
+    freqRatioList.append(fOrNone(isoN[8]))
     refSampleList.append(isoN[9])
     sampleConditionList.append(isoN[10])
     if isoN[4] == '0.5' or spinList[i] is None or qList[i] is None:
         linewidthFactorList.append(None)
     else:
+        #Linewidth due to quadrupolar broadening: (2I + 3) * Q /(I^2 * (2I - 1))
         linewidthFactorList.append((2 * spinList[i] + 3) * qList[i]**2 / (spinList[i]**2 * (2 * spinList[i] - 1)))
         
     if gammaList[-1] is not None and abundanceList[-1] is not None and spinList[-1] is not None:
+        #Sensitivity: chi * gamma**3 * I * (I + 1)
         sensList.append(abundanceList[-1] * abs(gammaList[-1])**3 * spinList[-1] * (spinList[-1] + 1))
     else:
         sensList.append(None)
@@ -462,13 +456,10 @@ class DetailWindow(QtWidgets.QWidget):
                 self.qLabels[i].setText('-')
             else:
                 self.qLabels[i].setText(str(atomProp['q'][i]))
-            self.freqEntries[i].setText(
-                str(self.father.freqConst * atomProp['freqRatio'][i]))
+            self.freqEntries[i].setText(str(self.father.freqConst * atomProp['freqRatio'][i]))
             if sys.version_info < (3,):  # check version for possible unicode tricks
-                self.sampleLabels[i].setText(
-                    atomProp['refSample'][i].decode('utf-8'))
-                self.conditionLabels[i].setText(
-                    atomProp['sampleCondition'][i].decode('utf-8'))
+                self.sampleLabels[i].setText(atomProp['refSample'][i].decode('utf-8'))
+                self.conditionLabels[i].setText(atomProp['sampleCondition'][i].decode('utf-8'))
             else:
                 self.sampleLabels[i].setText(atomProp['refSample'][i])
                 self.conditionLabels[i].setText(atomProp['sampleCondition'][i])
