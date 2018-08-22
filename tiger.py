@@ -26,7 +26,6 @@ try:
 except ImportError:
     from PyQt5 import QtGui, QtCore, QtWidgets
     QT = 5
-from safeEval import safeEval
 import os
 import math
 
@@ -36,6 +35,12 @@ def fOrNone(inp):
         return None
     else:
         return float(inp)
+
+def safeEval(inp, length=None):
+    try:
+        return eval(inp)
+    except Exception:
+        return None
 
 SPINNAMES = ['0', '1/2', '1', '3/2', '2',
              '5/2', '3', '7/2', '4', '9/2',
