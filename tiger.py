@@ -205,7 +205,7 @@ class PeriodicTable(QtWidgets.QWidget):
             tmpWidget = QtWidgets.QWidget()
             self.legendEntries.append(PtQLineEdit(SPINNAMES[i]))
             self.legendEntries[-1].setReadOnly(True)
-            grid.addWidget(self.legendEntries[-1], 0, i + 4)
+            grid.addWidget(self.legendEntries[-1], 0, i + 5)
             self.legendEntries[-1].hide()
         for i in range(ATOMNUM):
             groupList.append(QtWidgets.QWidget())
