@@ -201,17 +201,11 @@ class PeriodicTable(QtWidgets.QWidget):
         self.listPush.pressed.connect(lambda : self.openList())
         grid.addWidget(self.listPush, 1, 6,1,2)
         grid.addWidget(PtQLabel('Spin:'), 0, 4)
-        splitVal = int(math.ceil(len(SPINNAMES) / 2.0))
-        for i in range(1, splitVal):
+        for i in range(len(SPINNAMES)):
             tmpWidget = QtWidgets.QWidget()
             self.legendEntries.append(PtQLineEdit(SPINNAMES[i]))
             self.legendEntries[-1].setReadOnly(True)
             grid.addWidget(self.legendEntries[-1], 0, i + 4)
-            self.legendEntries[-1].hide()
-        for i in range(splitVal, len(SPINNAMES)):
-            self.legendEntries.append(PtQLineEdit(SPINNAMES[i]))
-            self.legendEntries[-1].setReadOnly(True)
-            grid.addWidget(self.legendEntries[-1], 1, i - splitVal + 5)
             self.legendEntries[-1].hide()
         for i in range(ATOMNUM):
             groupList.append(QtWidgets.QWidget())
