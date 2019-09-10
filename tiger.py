@@ -19,6 +19,8 @@
 # along with Tiger. If not, see <http://www.gnu.org/licenses/>.
 
 import sys
+import os
+import math
 try:
     from PyQt5 import QtGui, QtCore, QtWidgets
     QT = 5
@@ -26,8 +28,6 @@ except ImportError:
     from PyQt4 import QtGui, QtCore
     from PyQt4 import QtGui as QtWidgets
     QT = 4
-import os
-import math
 import loadIsotopes
 
 def safeEval(inp, length=None):
@@ -57,19 +57,19 @@ MASTERISOTOPELIST = []
 LONGEST = 0
 for i in range(ATOMNUM):
     isotopeEntry = {'name': [],
-                      'fullName': [],
-                      'mass': [],
-                      'spin': [],
-                      'abundance': [],
-                      'gamma': [],
-                      'q': [],
-                      'freqRatio': [],
-                      'refSample': [],
-                      'sampleCondition': [],
-                      'linewidthFactor': [],
-                      'lifetime': [],
-                      'sensitivity': []}
-    Vals = [j for j,val in enumerate(isotopes['atomNum']) if val==i+1] #Position of all elements with val == i+1
+                    'fullName': [],
+                    'mass': [],
+                    'spin': [],
+                    'abundance': [],
+                    'gamma': [],
+                    'q': [],
+                    'freqRatio': [],
+                    'refSample': [],
+                    'sampleCondition': [],
+                    'linewidthFactor': [],
+                    'lifetime': [],
+                    'sensitivity': []}
+    Vals = [j for j,val in enumerate(isotopes['atomNum']) if val == i+1] #Position of all elements with val == i+1
     for elem in Vals:
         isotopeEntry['name'].append(isotopes['name'][elem])
         isotopeEntry['fullName'].append(isotopes['fullName'][elem])
@@ -84,9 +84,8 @@ for i in range(ATOMNUM):
         isotopeEntry['linewidthFactor'].append(isotopes['linewidthFactor'][elem])
         isotopeEntry['lifetime'].append(isotopes['lifetime'][elem])
         isotopeEntry['sensitivity'].append(isotopes['sensitivity'][elem])
-
     LONGEST = max(LONGEST, len(Vals))
-    if len(Vals) > 0:
+    if Vals:
         if isotopeEntry['mass'].count(None) == len(Vals): #If all 'None'
             isotopeEntry['mass'] = None
         MASTERISOTOPELIST.append(isotopeEntry)
@@ -137,14 +136,13 @@ class PeriodicTable(QtWidgets.QWidget):
         self.electronEntry.returnPressed.connect(self.setElectron)
         grid.addWidget(self.electronEntry, 1, 3)
         self.detailsPush = QtWidgets.QPushButton('Details')
-        self.detailsPush.clicked.connect(lambda : self.openWindow(None, 0))
-        grid.addWidget(self.detailsPush, 1, 4,1,2)
+        self.detailsPush.clicked.connect(lambda: self.openWindow(None, 0))
+        grid.addWidget(self.detailsPush, 1, 4, 1, 2)
         self.listPush = QtWidgets.QPushButton('List')
-        self.listPush.clicked.connect(lambda : self.openList())
-        grid.addWidget(self.listPush, 1, 6,1,2)
+        self.listPush.clicked.connect(self.openList)
+        grid.addWidget(self.listPush, 1, 6, 1, 2)
         grid.addWidget(PtQLabel('Spin:'), 0, 4)
-        for i in range(len(SPINNAMES)):
-            tmpWidget = QtWidgets.QWidget()
+        for i, _ in enumerate(SPINNAMES):
             self.legendEntries.append(PtQLineEdit(SPINNAMES[i]))
             self.legendEntries[-1].setReadOnly(True)
             grid.addWidget(self.legendEntries[-1], 0, i + 5)
@@ -154,16 +152,16 @@ class PeriodicTable(QtWidgets.QWidget):
             groupList[-1].mouseDoubleClickEvent = lambda arg, i=i: self.openWindow(arg, i)
             grid.addWidget(groupList[-1], count1 + 2, count2)
             count2 += 1
-            if count1 is 0 and count2 is 1:
+            if count1 == 0 and count2 == 1:
                 count2 = 17
-            elif (count1 is 1 or count1 is 2) and count2 is 2:
+            elif (count1  in (1, 2)) and count2 == 2:
                 count2 = 12
-            elif (count1 is 5 or count1 is 6) and count2 is 2:
+            elif (count1 in (5, 6)) and count2 == 2:
                 count1 += 2
-            elif (count1 is 7 or count1 is 8) and count2 is 16:
+            elif (count1 in (7, 8)) and count2 == 16:
                 count2 = 2
                 count1 -= 2
-            elif count2 is 18:
+            elif count2 == 18:
                 count2 = 0
                 count1 += 1
             grid2 = QtWidgets.QGridLayout()
@@ -197,18 +195,18 @@ class PeriodicTable(QtWidgets.QWidget):
                     self.spinSet.add(MASTERISOTOPELIST[i]['spin'][int(self.isoSelect[i])])
                 else:
                     self.labelList[i].setText(str(i + 1) + ': ' + MASTERISOTOPELIST[i]['name'][int(self.isoSelect[i])])
-                    self.freqEditList[i].setStyleSheet('border-style: solid;color: rgb(0, 0, 0); border-width: 2px;' )
+                    self.freqEditList[i].setStyleSheet('border-style: solid;color: rgb(0, 0, 0); border-width: 2px;')
             else:
                 self.labelList[i].setText(str(i + 1) + ': ')
                 self.freqEditList[i].setText('')
-                self.freqEditList[i].setStyleSheet('border-style: solid;color: rgb(0, 0, 0); border-width: 2px;' )
+                self.freqEditList[i].setStyleSheet('border-style: solid;color: rgb(0, 0, 0); border-width: 2px;')
         self.updLegend()
 
     def updLegend(self):
         sortSpinList = [x * 2 for x in sorted(list(self.spinSet))]
         for legendEntry in self.legendEntries:
             legendEntry.hide()
-        for i in range(len(sortSpinList)):
+        for i, _ in enumerate(sortSpinList):
             index = int(sortSpinList[i])
             color = QtGui.QColor(SPINCOLORS[index])
             colorA = QtGui.QColor()
@@ -358,7 +356,7 @@ class DetailWindow(QtWidgets.QWidget):
         self.atomSelect(self.n + 1)
 
     def atomSelectName(self, name):
-        for i in range(len(MASTERISOTOPELIST)):
+        for i, _ in enumerate(MASTERISOTOPELIST):
             var = MASTERISOTOPELIST[i]
             if var is not None:
                 if name == var['name'][0]:
@@ -382,7 +380,7 @@ class DetailWindow(QtWidgets.QWidget):
         for i in range(num):
             self.massLabels[i].setText(str(int(atomProp['mass'][i])))
             self.spinLabels[i].setText(SPINNAMES[int(2 * atomProp['spin'][i])])
-            if atomProp['abundance'][i] == None:
+            if atomProp['abundance'][i] is None:
                 if atomProp['lifetime'][i] == '-':
                     self.abundanceLabels[i].setText('-')
                 else:
@@ -408,9 +406,7 @@ class DetailWindow(QtWidgets.QWidget):
                 self.linewidthLabels[i].setText('-')
             else:
                 self.linewidthLabels[i].setText('%#2.2f' % atomProp['linewidthFactor'][i])
-            spin1 = atomProp['spin'][i]
-            spin2 = MASTERISOTOPELIST[self.refAtom]['spin'][self.refIso]
-            if atomProp['sensitivity'][i] is None or MASTERISOTOPELIST[self.refAtom]['sensitivity'][self.refIso] is None :
+            if atomProp['sensitivity'][i] is None or MASTERISOTOPELIST[self.refAtom]['sensitivity'][self.refIso] is None:
                 self.sensLabels[i].setText('-')
             else:
                 sens = atomProp['sensitivity'][i] / MASTERISOTOPELIST[self.refAtom]['sensitivity'][self.refIso]
@@ -424,7 +420,7 @@ class DetailWindow(QtWidgets.QWidget):
             self.refIso = MASTERISOTOPELIST[self.refAtom]['mass'].index(isotopes['atomMass'][n])
         self.upd()
 
-    def changeSelect(self, n):
+    def changeSelect(self, *args):
         self.father.isoSelect[self.n] = self.buttongroup.checkedId()
         self.father.upd()
 
@@ -483,24 +479,22 @@ class ListWindow(QtWidgets.QWidget):
 
         grid.addWidget(PtQLabel('Order:'), 0, 0)
         self.orderType = QtWidgets.QComboBox()
-        self.orderType.addItems(['Element number','Frequency (Descending)','Frequency (Ascending)',  'Spin (Descending)', 'Spin (Ascending)','Q (Descending)', 'Q (Ascending)',
-            'Abundance (Descending)', 'Abundance (Ascending)','Sensitivity (Descending)', 'Sensitivity (Ascending)'])
+        self.orderType.addItems(['Element number', 'Frequency (Descending)', 'Frequency (Ascending)',
+                                 'Spin (Descending)', 'Spin (Ascending)', 'Q (Descending)', 'Q (Ascending)',
+                                 'Abundance (Descending)', 'Abundance (Ascending)', 'Sensitivity (Descending)', 'Sensitivity (Ascending)'])
         self.orderType.currentIndexChanged.connect(self.upd)
-        grid.addWidget(self.orderType,0,1)
-
-        self.table = QtWidgets.QTableWidget(1,8)
+        grid.addWidget(self.orderType, 0, 1)
+        self.table = QtWidgets.QTableWidget(1, 8)
         if QT == 4:
             self.table.horizontalHeader().setResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         elif QT == 5:
             self.table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.table.verticalHeader().setVisible(False)
-        self.table.setHorizontalHeaderLabels(['Nucleus','Name','Spin','Abundance [%]','Q [fm^2]','Frequency ratio [%]',
-            'Frequency [MHz]','Sensitivity [1H]'])
-
-        grid.addWidget(self.table, 1, 0,1,6)
-        #grid.setRowStretch(3, 2)
+        self.table.setHorizontalHeaderLabels(['Nucleus', 'Name', 'Spin', 'Abundance [%]', 'Q [fm^2]',
+                                              'Frequency ratio [%]', 'Frequency [MHz]', 'Sensitivity [1H]'])
+        grid.addWidget(self.table, 1, 0, 1, 6)
         grid.setColumnStretch(5, 1)
-        self.spinName = ['1/2','1','3/2','2','5/2','3','7/2','4','9/2','5','6','7']
+        self.spinName = ['1/2', '1', '3/2', '2', '5/2', '3', '7/2', '4', '9/2', '5', '6', '7']
         self.spinVals = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 7]
         self.upd()
         self.resize(900, 800)
@@ -511,24 +505,21 @@ class ListWindow(QtWidgets.QWidget):
         isotopes = []
         for elem in MASTERISOTOPELIST:
             if elem['mass'] is not None:
-                for i in range(len(elem['mass'])):
-                    isotopes.append( {'mass':elem['mass'][i],  'name': elem['name'][i], 'fullName':elem['fullName'][i],
-                        'spin': elem['spin'][i], 'abundance': elem['abundance'][i],'q': elem['q'][i],'freqRatio': elem['freqRatio'][i],
-                        'gamma': elem['gamma'][i],})
-
+                for i, _ in enumerate(elem['mass']):
+                    isotopes.append({'mass':elem['mass'][i], 'name': elem['name'][i], 'fullName':elem['fullName'][i],
+                                     'spin': elem['spin'][i], 'abundance': elem['abundance'][i], 'q': elem['q'][i],
+                                     'freqRatio': elem['freqRatio'][i], 'gamma': elem['gamma'][i],})
                     if elem['sensitivity'][i] is None or MASTERISOTOPELIST[0]['sensitivity'][0] is None:
                         sens = {'sens': None}
                     else:
                         sensTmp = elem['sensitivity'][i] / MASTERISOTOPELIST[0]['sensitivity'][0]
                         sens = {'sens': sensTmp}
                     isotopes[-1].update(sens)
-
         orderType = self.orderType.currentIndex()
         if orderType != 0:
-            orderings = [['freqRatio', True],['freqRatio', False],['spin', True],['spin', False],['q', True],['q', False],['abundance', True],['abundance', False],
-                    ['sens', True],['sens', False]]
+            orderings = [['freqRatio', True], ['freqRatio', False], ['spin', True], ['spin', False], ['q', True], ['q', False],
+                         ['abundance', True], ['abundance', False], ['sens', True], ['sens', False]]
             actions = orderings[orderType - 1]
-
             tmp = []
             for elem in isotopes:
                 tmp.append(elem[actions[0]])
@@ -540,31 +531,31 @@ class ListWindow(QtWidgets.QWidget):
 
         for elem in isotopes:
             self.table.setRowCount(count + 1)
-            self.table.setItem(count,0,tableItem(str(int(elem['mass'])) + elem['name']))
-            self.table.setItem(count,1,tableItem(elem['fullName']))
+            self.table.setItem(count, 0, tableItem(str(int(elem['mass'])) + elem['name']))
+            self.table.setItem(count, 1, tableItem(elem['fullName']))
             Spin = elem['spin']
             Spin = self.spinName[self.spinVals.index(Spin)]
-            self.table.setItem(count,2,tableItem(Spin))
+            self.table.setItem(count, 2, tableItem(Spin))
             Abun = elem['abundance']
             if Abun is None:
                 Abun = '-'
             else:
                 Abun = str(Abun)
-            self.table.setItem(count,3,tableItem(Abun))
+            self.table.setItem(count, 3, tableItem(Abun))
             Q = elem['q']
             if Q is None:
                 Q = '-'
             else:
                 Q = str(Q)
-            self.table.setItem(count,4,tableItem(Q))
-            self.table.setItem(count,5,tableItem(str(elem['freqRatio'])))
-            self.table.setItem(count,6,tableItem(str(elem['freqRatio'] * self.father.freqConst)))
+            self.table.setItem(count, 4, tableItem(Q))
+            self.table.setItem(count, 5, tableItem(str(elem['freqRatio'])))
+            self.table.setItem(count, 6, tableItem(str(elem['freqRatio'] * self.father.freqConst)))
             sens = elem['sens']
             if sens is None:
                 sens = '-'
             else:
                 sens = str(sens)
-            self.table.setItem(count,7,tableItem(sens))
+            self.table.setItem(count, 7, tableItem(sens))
             count += 1
 
     def closeEvent(self, event):
