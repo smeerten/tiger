@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright 2016 - 2017 Bas van Meerten and Wouter Franssen
+# Copyright 2016 - 2020 Bas van Meerten and Wouter Franssen
 
 # This file is part of Tiger.
 #
@@ -21,13 +21,26 @@
 import sys
 
 def fOrNone(inp):
-    #Convert to float is possible, otherwise None
+    """Converts a string to a float and dashes to None"""
     if inp == '-':
         return None
     return float(inp)
 
-
 def getIsotopeInfo(isoPath):
+    """
+    Loads the isotope table from a given path.
+
+    Parameters
+    ----------
+    isoPath : str
+        The path to the file with the isotope properties.
+
+    Returns
+    -------
+    dict
+        A dictionary with the isotope properties.
+        Unknown or undefined values are set to None.
+    """
     if sys.version_info < (3,):
         with open(isoPath) as isoFile:
             isoList = [line.strip().split('\t') for line in isoFile]
@@ -69,11 +82,9 @@ def getIsotopeInfo(isoPath):
         if isoN[4] == '0.5' or spinList[i] is None or qList[i] is None:
             linewidthFactorList.append(None)
         else:
-            #Linewidth due to quadrupolar broadening: (2I + 3) * Q /(I^2 * (2I - 1))
-            linewidthFactorList.append((2 * spinList[i] + 3) * qList[i]**2 / (spinList[i]**2 * (2 * spinList[i] - 1)))
+            linewidthFactorList.append((2 * spinList[i] + 3) * qList[i]**2 / (spinList[i]**2 * (2 * spinList[i] - 1)))  # Linewidth due to quadrupolar broadening: (2I + 3) * Q /(I^2 * (2I - 1))
         if gammaList[-1] is not None and abundanceList[-1] is not None and spinList[-1] is not None:
-            #Sensitivity: chi * gamma**3 * I * (I + 1)
-            sensList.append(abundanceList[-1] * abs(gammaList[-1])**3 * spinList[-1] * (spinList[-1] + 1))
+            sensList.append(abundanceList[-1] * abs(gammaList[-1])**3 * spinList[-1] * (spinList[-1] + 1))              # Sensitivity: chi * gamma**3 * I * (I + 1)
         else:
             sensList.append(None)
         lifetimeList.append(isoN[11])
